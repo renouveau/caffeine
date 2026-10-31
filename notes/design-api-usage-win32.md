@@ -1,0 +1,7 @@
+# API usage in `PlatformPowerRequests.Win32`
+
+Currently, Win32 implementation of `PowerRequest` uses [`SetThreadExecutionState`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadexecutionstate) instead of the newer [`PowerCreateRequest` series](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-powercreaterequest).  The reason is *not* that `SetThreadExecutionState` is supported on earlier systems than `PowerCreateRequest`.
+
+Per the documentation of [`PowerSetRequest`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-powersetrequest#remarks), using it to request system (do not idle to sleep) or execution (only applicable to suspension of Windows Store apps) will become ineffective 5 minutes after system sleep timer expires on Modern Standby (which I interpret as “Connected Standby”) on battery.  It also mentions that away-mode requests are terminated once the user initiates a sleep on non-S3 machines.  In contrast, the documentation of [`SetThreadExecutionState`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadexecutionstate) doesn’t mention such restrictions.  This is the reason that moved the needle, despite `PowerCreateRequest` is more user-friendly as it allows us to set a description.
+
+It’s well possible that `SetThreadExecutionState` is subject to the same set of constraints, just not stated.  Here, I utilize prayer-based programming.
