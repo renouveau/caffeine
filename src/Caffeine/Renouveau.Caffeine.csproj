@@ -12,7 +12,7 @@
     <Description>For requesting the system not go idle so that long-running tasks continue uninterrupted.</Description>
     <!-- Write-AssemblyMetadata.ps1 -->
     <Version>0.1.0</Version>
-    <ps1_IsStable>true</ps1_IsStable>
+    <ps1_IsStable>false</ps1_IsStable>
     <ps1_AssemblyMetadata>true</ps1_AssemblyMetadata>
     <!-- NuGet packaging -->
     <IsPackable>true</IsPackable>
