@@ -1,7 +1,7 @@
 @{
 
 # RootModule = ''
-ModuleVersion = '0.0.0'
+ModuleVersion = '0.1.0'
 # CompatiblePSEditions = @()
 GUID = '22b8071a-405b-41e3-961f-be03c1ce8a26'
 
@@ -35,11 +35,11 @@ AliasesToExport = @()
 
 PrivateData = @{
   PSData = @{
-    Tags = @()
+    Tags = @('awake', 'sleep', 'idle', 'display', 'screen', 'power-management', 'windows')
     LicenseUri = 'https://github.com/renouveau/caffeine/blob/main/LICENSE'
     ProjectUri = 'https://github.com/renouveau/caffeine'
     IconUri = 'https://raw.githubusercontent.com/renouveau/caffeine/refs/heads/main/src/ForPowerShell/icon.png'
-    ReleaseNotes = ''
+    ReleaseNotes = 'Initial release, currently only supporting Windows.'
     # Prerelease = ''
     RequireLicenseAcceptance = $true
     # ExternalModuleDependencies = @()
