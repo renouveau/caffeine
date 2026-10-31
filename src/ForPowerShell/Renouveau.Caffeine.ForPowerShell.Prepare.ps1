@@ -42,6 +42,27 @@ See `InProcess` parameter set of `Invoke-Command`.
 .PARAMETER InputObject
 See `InProcess` parameter set of `Invoke-Command`, except this parameter does not take value from the pipeline.
 
+.EXAMPLE
+# Prevent display/computer from idling until Ctrl+C.
+Invoke-CommandAwake -NoIdleSleep -NoIdleDisplay { while ($true) { Start-Sleep 60; } };
+
+.EXAMPLE
+# Run a benchmark across commits and save the results.
+# Cool down the computer before each execution.
+# Prevent the computer from sleeping during the cooldown.
+Invoke-CommandAwake -NoIdleSleep -NoIdleDisplay {
+  $commits = @('a', 'b', 'c');
+  0..($commits.Count - 1) | ForEach-Object {
+    git checkout ($commits[$_]) --;
+    dotnet build -c Release;
+    Start-Sleep 600;
+    Push-Location './Benchmarks/bin/Release/net10.0';
+    ./Benchmarks --filter *bench1*;
+    Rename-Item 'BenchmarkDotNet.Artifacts' "BenchmarkDotNet.Artifacts-$_-$($commits[$_])";
+    Pop-Location;
+  };
+};
+
 #>
 [CmdletBinding(PositionalBinding=$false)]
 Param
