@@ -37,7 +37,7 @@ Copy-Item -LiteralPath "$PSScriptRoot/Renouveau.Caffeine.ForPowerShell.psd1" -De
 Copy-Item -LiteralPath "$PSScriptRoot/Renouveau.Caffeine.ForPowerShell.Prepare.ps1" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
 Copy-Item -LiteralPath "$PSScriptRoot/../../LICENSE" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/license.txt" -Force;
 Copy-Item -LiteralPath "$PSScriptRoot/NOTICE" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
-Copy-Item -LiteralPath "$PSScriptRoot/icon.png" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force -ErrorAction 'Ignore';
+Copy-Item -LiteralPath "$PSScriptRoot/icon.png" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
 };
 If ($Error.Count -ne $PrevError) { Return; }
 
