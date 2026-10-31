@@ -30,7 +30,20 @@ Try
     Throw 'Build-SolutionPackages.ps1: Push-Location failed.';
   }
   Write-Verbose "Build-SolutionPackages.ps1: Location = $((Get-Location).Path)";
-  Write-Warning 'Build-SolutionPackages.ps1: NOT IMPLEMENTED.';
+  If (-not $Incremental)
+  {
+    Remove-Item ([System.IO.Path]::Combine($PSScriptRoot, 'src', '*', 'bin', 'Release')) -Force -Recurse -ErrorAction 'Ignore';
+    Remove-Item ([System.IO.Path]::Combine($PSScriptRoot, 'src', '*', 'obj', 'Release')) -Force -Recurse -ErrorAction 'Ignore';
+  }
+  $local:NativeExitCode = 0;
+  dotnet pack;
+  $NativeExitCode = $LASTEXITCODE;
+  If ($NativeExitCode -ne 0)
+  {
+    Write-Error "Build-SolutionPackages.ps1: failed with exit code $($NativeExitCode): dotnet pack";
+    Return;
+  }
+  & './ForPowerShell/Build-ForPowerShell.ps1' -Configuration 'Release';
 }
 Finally
 {
