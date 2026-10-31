@@ -18,7 +18,4 @@
     <File Path="../Convert-NupkgToDet.ps1" />
   </Folder>
   <Project Path="Caffeine/Renouveau.Caffeine.csproj" />
-  <!--
-  <Project Path="ForPowerShell/Renouveau.Caffeine.ForPowerShell.csproj" />
-  -->
 </Solution>

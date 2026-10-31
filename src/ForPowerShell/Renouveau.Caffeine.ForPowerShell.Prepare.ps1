@@ -1,0 +1,94 @@
+<#
+
+SPDX-FileCopyrightText: Copyright 2026 Ji Luo, all rights reserved.
+SPDX-License-Identifier: MIT
+
+This file is part of Renouveau Caffeine, available under the MIT license.
+https://github.com/renouveau/caffeine
+
+#>
+
+$null = & {
+  Add-Type -LiteralPath "$PSScriptRoot/Renouveau.Caffeine.dll";
+};
+
+Function Invoke-CommandAwake
+{
+<#
+.SYNOPSIS
+Requests that the system idle timers not time out while running a command.
+
+.PARAMETER NoIdleSleep
+Prevents the system from sleeping automatically.
+
+.PARAMETER NoIdleDisplay
+Prevents the display from being turn off automatically.
+
+.PARAMETER NoSleep
+Prevents the system from entering sleep even if the user initiates it.
+
+.PARAMETER Permissive
+Runs the command even if one or more requests are not supported.  By default, the execution fails immediately if one or more requests are not supported.  Specifying this switch does not allow the command to run when the request(s) fail(s) for other reasons (such as a failure of native API call).
+
+.PARAMETER ScriptBlock
+See `InProcess` parameter set of `Invoke-Command`.
+
+.PARAMETER ArgumentList
+See `InProcess` parameter set of `Invoke-Command`.
+
+.PARAMETER InputObject
+See `InProcess` parameter set of `Invoke-Command`, except this parameter does not take value from the pipeline.
+
+#>
+[CmdletBinding(PositionalBinding=$false)]
+Param
+(
+  [Parameter(Mandatory=$true,Position=0)]
+  [Alias('Command')]
+  [scriptblock]$ScriptBlock,
+  [Alias('Args')]
+  [object[]]$ArgumentList,
+  [PSObject]$InputObject,
+  [switch]$NoIdleSleep,
+  [switch]$NoIdleDisplay,
+  [switch]$NoSleep,
+  [switch]$Permissive
+)
+
+$private:preferred = [Renouveau.Caffeine.PowerRequestFlags]::None;
+If ($NoIdleSleep)   { $preferred = $preferred -bor [Renouveau.Caffeine.PowerRequestFlags]::DoNotIdleSleep;   }
+If ($NoIdleDisplay) { $preferred = $preferred -bor [Renouveau.Caffeine.PowerRequestFlags]::DoNotIdleDisplay; }
+If ($NoSleep)       { $preferred = $preferred -bor [Renouveau.Caffeine.PowerRequestFlags]::DoNotSleep;       }
+$private:minimum = $preferred;
+If ($Permissive) { $minimum = [Renouveau.Caffeine.PowerRequestFlags]::None; }
+$private:request = $null;
+
+$private:CurrErrActionPref = $ErrorActionPreference;
+$local:ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop;
+Try
+{
+  $private:request = [Renouveau.Caffeine.PowerRequest]::Create($preferred, $minimum);
+  If ($request.ActiveRequests -ne $preferred)
+  {
+    Write-Warning "Invoke-CommandAwake: FEWER active requests: $($request.ActiveRequests)";
+  }
+  Else
+  {
+    Write-Verbose "Invoke-CommandAwake: active requests: $($request.ActiveRequests)";
+  }
+  If ($request -ne $null)
+  {
+    & { [CmdletBinding()] Param()
+      Invoke-Command -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList -InputObject $InputObject;
+    } -ErrorAction $CurrErrActionPref;
+  }
+}
+Finally
+{
+  If ($request -ne $null)
+  {
+    $request.Dispose();
+  }
+}
+
+}
