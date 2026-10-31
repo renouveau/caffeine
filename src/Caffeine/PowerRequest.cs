@@ -128,9 +128,11 @@ namespace Renouveau.Caffeine
 
     private static Func<PowerRequestFlags, PowerRequestFlags, PowerRequest> CreatePlatformCreate()
     {
+      // Use delegate constructors to prevent C# compiler from
+      // unnecessarily caching method-group-to-delegate conversion results.
       if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        return Win32.Create;
-      return NoOp.Create;
+        return new Func<PowerRequestFlags, PowerRequestFlags, PowerRequest>(Win32.Create);
+      return new Func<PowerRequestFlags, PowerRequestFlags, PowerRequest>(NoOp.Create);
     }
   }
 }
