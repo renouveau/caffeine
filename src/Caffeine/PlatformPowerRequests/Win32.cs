@@ -37,7 +37,7 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
       {
         Interlocked.Exchange(ref flags_, (int)(uint)flags);
         site_ = null;
-        if (flags == 0)
+        if (flags == PowerRequestFlags.None)
         {
           Dispose();
           // ^^^ The only interesting effect is it suppresses finalization of `this`.
