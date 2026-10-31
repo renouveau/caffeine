@@ -30,6 +30,9 @@ Prevents the system from entering sleep even if the user initiates it.
 .PARAMETER Permissive
 Runs the command even if one or more requests are not supported.  By default, the execution fails immediately if one or more requests are not supported.  Specifying this switch does not allow the command to run when the request(s) fail(s) for other reasons (such as a failure of native API call).
 
+.PARAMETER NoUsage
+Do not output usage hints to the warning stream when an unusual usage is detected.
+
 .PARAMETER ScriptBlock
 See `InProcess` parameter set of `Invoke-Command`.
 
@@ -49,6 +52,7 @@ Param
   [Alias('Args')]
   [object[]]$ArgumentList,
   [PSObject]$InputObject,
+  [switch]$NoUsage,
   [switch]$NoIdleSleep,
   [switch]$NoIdleDisplay,
   [switch]$NoSleep,
@@ -62,6 +66,16 @@ If ($NoSleep)       { $preferred = $preferred -bor [Renouveau.Caffeine.PowerRequ
 $private:minimum = $preferred;
 If ($Permissive) { $minimum = [Renouveau.Caffeine.PowerRequestFlags]::None; }
 $private:request = $null;
+
+If ($preferred -eq [Renouveau.Caffeine.PowerRequestFlags]::None -and -not $NoUsage)
+{
+  If (((@('NoIdleSleep', 'NoIdleDisplay', 'NoSleep') | ForEach-Object {
+    If ($PSBoundParameters.ContainsKey($_)) { '1' } Else { '' }
+  }) -join '') -eq '')
+  {
+    Write-Warning "No power request switch is specified and the command will run without any power request.`n         Did you forget to specify a switch?";
+  }
+}
 
 $private:CurrErrActionPref = $ErrorActionPreference;
 $local:ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop;
