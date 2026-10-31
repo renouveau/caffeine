@@ -53,16 +53,16 @@ $NuPkgSource = $NuPkgSource[0];
 $NuPkgName   = $NuPkgSource.Name;
 $NuPkgSource = $NuPkgSource.FullName;
 
-If (-not (Test-Path -LiteralPath "$PSScriptRoot/../../packed"))
+If (-not (Test-Path -LiteralPath "$PSScriptRoot/../../packed/Release"))
 {
-  New-Item -Path "$PSScriptRoot/../.." -Name 'packed' -ItemType 'Directory' | Out-Null;
+  New-Item -Path "$PSScriptRoot/../../packed" -Name 'Release' -ItemType 'Directory' | Out-Null;
 }
-If (-not (Test-Path -LiteralPath "$PSScriptRoot/../../packed" -PathType Container))
+If (-not (Test-Path -LiteralPath "$PSScriptRoot/../../packed/Release" -PathType Container))
 {
-  Write-Error "Not a directory: $PSScriptRoot/../../packed";
+  Write-Error "Not a directory: $PSScriptRoot/../../packed/Release";
   Return;
 }
 & "$PSScriptRoot/../../Convert-NupkgToDet.ps1" `
   -InputFile $NuPkgSource `
-  -OutputFile "$PSScriptRoot/../../packed/$NuPkgName" `
+  -OutputFile "$PSScriptRoot/../../packed/Release/$NuPkgName" `
   -SmallestSize -Strict:$false -NonInteractive:$false;
