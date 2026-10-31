@@ -8,6 +8,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Renouveau.Caffeine.PlatformPowerRequests;
 
@@ -109,6 +110,8 @@ namespace Renouveau.Caffeine
 
     private static Func<PowerRequestFlags, PowerRequestFlags, PowerRequest> CreatePlatformCreate()
     {
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        return Win32.Create;
       return NoOp.Create;
     }
   }
