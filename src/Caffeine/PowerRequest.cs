@@ -106,6 +106,24 @@ namespace Renouveau.Caffeine
       return PlatformCreate(preferred, minimum);
     }
 
+    /// <summary>
+    /// Calls <c><see cref="Create(PowerRequestFlags, PowerRequestFlags)"/></c>
+    /// with <c>minimum</c> being <c><see cref="PowerRequestFlags.None"/></c>.
+    /// </summary>
+    public static PowerRequest TryCreate(PowerRequestFlags preferred)
+    {
+      return Create(preferred, PowerRequestFlags.None);
+    }
+
+    /// <summary>
+    /// Calls <c><see cref="Create(PowerRequestFlags, PowerRequestFlags)"/></c>
+    /// with both <c>preferred</c> and <c>minimum</c> being <c><paramref name="required"/></c>.
+    /// </summary>
+    public static PowerRequest Create(PowerRequestFlags required)
+    {
+      return Create(required, required);
+    }
+
     private static readonly Func<PowerRequestFlags, PowerRequestFlags, PowerRequest> PlatformCreate = CreatePlatformCreate();
 
     private static Func<PowerRequestFlags, PowerRequestFlags, PowerRequest> CreatePlatformCreate()
