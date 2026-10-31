@@ -25,7 +25,7 @@ namespace Renouveau.Caffeine
     /// Prevents the system from idling to sleep.
     /// This flag is supported only on Windows.
     /// </summary>
-    DoNotIdleToSleep = 0x1,
+    DoNotIdleSleep = 0x1,
     /// <summary>
     /// Prevents the system from idling to turn off the display.
     /// This flag is supported only on Windows.
