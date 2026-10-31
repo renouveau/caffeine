@@ -9,6 +9,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Renouveau.Caffeine.PlatformPowerRequests;
 
 namespace Renouveau.Caffeine
 {
@@ -108,7 +109,7 @@ namespace Renouveau.Caffeine
 
     private static Func<PowerRequestFlags, PowerRequestFlags, PowerRequest> CreatePlatformCreate()
     {
-      throw new NotImplementedException();
+      return NoOp.Create;
     }
   }
 }
