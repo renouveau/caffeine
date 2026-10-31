@@ -35,6 +35,9 @@ Get-ChildItem -LiteralPath "$PSScriptRoot/../Caffeine/bin/$Configuration/netstan
   Copy-Item -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
 Copy-Item -LiteralPath "$PSScriptRoot/Renouveau.Caffeine.ForPowerShell.psd1" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
 Copy-Item -LiteralPath "$PSScriptRoot/Renouveau.Caffeine.ForPowerShell.Prepare.ps1" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
+Copy-Item -LiteralPath "$PSScriptRoot/../../LICENSE" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/license.txt" -Force;
+Copy-Item -LiteralPath "$PSScriptRoot/NOTICE" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
+Copy-Item -LiteralPath "$PSScriptRoot/icon.png" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force -ErrorAction 'Ignore';
 };
 If ($Error.Count -ne $PrevError) { Return; }
 
