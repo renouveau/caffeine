@@ -33,8 +33,8 @@ Remove-Item -LiteralPath "$PSScriptRoot/bin/$Configuration" -Force -Recurse -Err
 New-Item -Path "$PSScriptRoot/bin/$Configuration" -Name 'PSModuleLayout' -ItemType 'Directory' -Force;
 Get-ChildItem -LiteralPath "$PSScriptRoot/../Caffeine/bin/$Configuration/netstandard2.0" -Filter '*.dll' |
   Copy-Item -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
-Copy-Item -LiteralPath "$PSScriptRoot/Renouveau.Caffeine.ForPowerShell.psd1" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
-Copy-Item -LiteralPath "$PSScriptRoot/Renouveau.Caffeine.ForPowerShell.Prepare.ps1" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
+Copy-Item -LiteralPath "$PSScriptRoot/RnvPs.Caffeine.psd1" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
+Copy-Item -LiteralPath "$PSScriptRoot/RnvPs.Caffeine.Prepare.ps1" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
 Copy-Item -LiteralPath "$PSScriptRoot/../../LICENSE" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/license.txt" -Force;
 Copy-Item -LiteralPath "$PSScriptRoot/NOTICE" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
 Copy-Item -LiteralPath "$PSScriptRoot/icon.png" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;

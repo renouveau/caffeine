@@ -19,7 +19,7 @@ PowerShellVersion = '5.1'
 
 # RequiredModules = @()
 # RequiredAssemblies = @()
-ScriptsToProcess = @('Renouveau.Caffeine.ForPowerShell.Prepare.ps1')
+ScriptsToProcess = @('RnvPs.Caffeine.Prepare.ps1')
 # TypesToProcess = @()
 # FormatsToProcess = @()
 # NestedModules = @()
