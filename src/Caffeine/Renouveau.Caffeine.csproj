@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <OutputType>library</OutputType>
+    <RootNamespace>Renouveau.Caffeine</RootNamespace>
+    <!-- project friendly name = file description (properties) -->
+    <AssemblyTitle>Renouveau.Caffeine</AssemblyTitle>
+    <!-- file name = original file name (properties) -->
+    <AssemblyName>Renouveau.Caffeine</AssemblyName>
+    <Copyright>Copyright © 2026 Ji Luo, all rights reserved.</Copyright>
+    <Description>For requesting the system not go idle so that long-running tasks continue uninterrupted.</Description>
+    <!-- Write-AssemblyMetadata.ps1 -->
+    <Version>0.0.0</Version>
+    <ps1_IsStable>false</ps1_IsStable>
+    <ps1_AssemblyMetadata>true</ps1_AssemblyMetadata>
+    <!-- NuGet packaging -->
+    <IsPackable>true</IsPackable>
+    <PackageId>Renouveau.Caffeine</PackageId>
+    <Authors>Ji Luo</Authors>
+    <PackageTags></PackageTags>
+    <PackageReleaseNotes></PackageReleaseNotes>
+  </PropertyGroup>
+
+  <Import Project="./../sln.csproj.xml" />
+
+</Project>

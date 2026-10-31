@@ -1,0 +1,24 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <Platform Name="Any CPU" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="../README.md" />
+    <File Path="../LICENSE" />
+    <File Path=".editorconfig" />
+    <File Path="sln.csproj.xml" />
+  </Folder>
+  <Folder Name="/Scripts/">
+    <File Path="../Remove-IgnoredFiles.ps1" />
+    <File Path="../Test-TextFileFormat.ps1" />
+    <File Path="../Write-AssemblyMetadata.ps1" />
+    <File Path="../Test-GoodForPacking.ps1" />
+    <File Path="../Convert-NupkgToDet.ps1" />
+  </Folder>
+  <Project Path="Caffeine/Renouveau.Caffeine.csproj" />
+  <!--
+  <Project Path="ForPowerShell/Renouveau.Caffeine.ForPowerShell.csproj" />
+  -->
+</Solution>

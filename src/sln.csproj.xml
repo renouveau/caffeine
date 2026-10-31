@@ -1,0 +1,169 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- compilation/build -->
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>AnyCPU</Platforms>
+    <Deterministic>true</Deterministic>
+    <HighEntropyVA>true</HighEntropyVA>
+    <LangVersion>14.0</LangVersion>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <!-- solution-level metadata -->
+    <Company>Renouveau</Company>
+    <Product>Renouveau Caffeine Module</Product>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <!-- IntelliSense/Build detection -->
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);DURING_IntelliSense</DefineConstants>
+  </PropertyGroup>
+  <Target Name="FromIntelliSenseToBuild" BeforeTargets="BeforeBuild">
+    <PropertyGroup>
+      <DefineConstants>$([System.Text.RegularExpressions.Regex]::Replace("$(DefineConstants)", "(^|;|\s)DURING_IntelliSense($|;|\s)", "$1DURING_Build$2"))</DefineConstants>
+    </PropertyGroup>
+  </Target>
+
+  <!-- basis for invoking PowerShell-based tools -->
+  <Target Name="ProbePowerShell">
+    <PropertyGroup>
+      <ps1_ExeName>pwsh</ps1_ExeName>
+      <ps1_PwshProbeExitCode>9009</ps1_PwshProbeExitCode>
+    </PropertyGroup>
+    <Exec Command="pwsh -NoLogo -NoProfile -NonInteractive -Command Exit 0" ContinueOnError="false" Condition="!$([MSBuild]::IsOsPlatform('Windows'))">
+    </Exec>
+    <Exec Command="pwsh -NoLogo -NoProfile -NonInteractive -Command Exit 0 >NUL 2>NUL" IgnoreExitCode="true" ContinueOnError="true" Condition="$([MSBuild]::IsOsPlatform('Windows'))">
+      <Output TaskParameter="ExitCode" PropertyName="ps1_PwshProbeExitCode" />
+    </Exec>
+    <PropertyGroup Condition="$([MSBuild]::IsOsPlatform('Windows')) And '$(ps1_PwshProbeExitCode)' != '0'">
+      <ps1_ExeName>powershell</ps1_ExeName>
+    </PropertyGroup>
+  </Target>
+
+  <!-- Write-AssemblyMetadata.ps1 -->
+  <PropertyGroup Condition="'$(ps1_IsStable)' != 'true'">
+    <ps1_IsStable>false</ps1_IsStable>
+    <ps1_IsStableSwitch></ps1_IsStableSwitch>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(ps1_IsStable)">
+    <ps1_IsStableSwitch>-IsStable</ps1_IsStableSwitch>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ps1_AssemblyMetadata)' != 'true'">
+    <ps1_AssemblyMetadata>false</ps1_AssemblyMetadata>
+  </PropertyGroup>
+  <ItemGroup Condition="$(ps1_AssemblyMetadata)">
+    <UpToDateCheckInput Include="./../../Write-AssemblyMetadata.ps1" />
+  </ItemGroup>
+  <PropertyGroup Condition="$(ps1_AssemblyMetadata)">
+    <!-- Suppress attributes emitted by Write-AssemblyMetadata.ps1. -->
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+  </PropertyGroup>
+  <Target Name="RemoveAssemblyMetadata" AfterTargets="CoreClean" Condition="$(ps1_AssemblyMetadata)">
+    <Delete Files="$(IntermediateOutputPath)AssemblyMetadata.g.cs" />
+  </Target>
+  <Target Name="WriteAssemblyMetadata" BeforeTargets="BeforeBuild" DependsOnTargets="ProbePowerShell" Condition="$(ps1_AssemblyMetadata)">
+    <Exec Command="$(ps1_ExeName) -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command ./../../Write-AssemblyMetadata.ps1 $(ps1_IsStableSwitch) -o '$(IntermediateOutputPath)AssemblyMetadata.g.cs' -ns '$(RootNamespace).Internals' -v '$(Version)' -tfm '$(TargetFramework)' -p '$(Platform)' -c '$(Configuration)' -b %22'MSBuild $(MSBuildVersion), .NET SDK $(NETCoreSdkVersion)'%22"
+      WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="NO_COLOR=NO_COLOR" />
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)AssemblyMetadata.g.cs" />
+    </ItemGroup>
+  </Target>
+
+  <!-- NuGet packaging -->
+  <PropertyGroup Condition="'$(IsPackable)' != 'true'">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ps1_IsPowerShellPackable)' != 'true'">
+    <ps1_IsPowerShellPackable>false</ps1_IsPowerShellPackable>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(IsPackable)">
+    <PackRelease>true</PackRelease>
+    <Title>$(PackageId)</Title>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <RepositoryUrl>https://github.com/renouveau/caffeine.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/renouveau/caffeine</PackageProjectUrl>
+    <PackageVersion>$(Version)</PackageVersion>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <ItemGroup Condition="$(IsPackable)">
+    <None Include="./../../LICENSE" Pack="true" Visible="false" PackagePath="" />
+    <None Include="./NOTICE" Pack="true" Visible="false" PackagePath="" />
+    <None Include="./icon.png" Pack="true" Visible="false" PackagePath="" />
+  </ItemGroup>
+  <PropertyGroup>
+    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+    <ContinuousIntegrationBuild>false</ContinuousIntegrationBuild>
+    <EnableSourceLink>false</EnableSourceLink>
+    <EmbedAllSources>false</EmbedAllSources>
+    <EmbedUntrackedSources>false</EmbedUntrackedSources>
+    <!-- NuGet packages should be uploaded separately. -->
+    <IsPublishable>False</IsPublishable>
+  </PropertyGroup>
+  <PropertyGroup Condition="($(IsPackable) Or $(ps1_IsPowerShellPackable)) And '$(Configuration)' == 'Release'">
+    <DeterministicSourcePaths>true</DeterministicSourcePaths>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <EnableSourceLink>true</EnableSourceLink>
+    <EmbedAllSources>false</EmbedAllSources>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+  <Target Name="TestGoodForPacking" BeforeTargets="Pack" DependsOnTargets="ProbePowerShell" Condition="$(IsPackable)">
+    <Exec Command="$(ps1_ExeName) -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command ./../../Test-GoodForPacking.ps1 -IsStableText $(ps1_IsStable)"
+      WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="NO_COLOR=NO_COLOR" />
+  </Target>
+  <Target Name="ConvertNupkgToDet" AfterTargets="Pack" DependsOnTargets="ProbePowerShell" Condition="$(IsPackable)">
+    <MakeDir Directories="$(MSBuildProjectDirectory)/../../packed/$(Configuration)" Condition="!Exists('$(MSBuildProjectDirectory)/../../packed/$(Configuration)')" />
+    <Exec Command="$(ps1_ExeName) -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command ./../../Convert-NupkgToDet.ps1 -i '$(OutputPath)$(PackageId).$(PackageVersion).nupkg' -o './../../packed/$(Configuration)/$(PackageId).$(PackageVersion).nupkg' -sz -s -ni"
+      WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="NO_COLOR=NO_COLOR" />
+    <Exec Command="$(ps1_ExeName) -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command ./../../Convert-NupkgToDet.ps1 -i '$(OutputPath)$(PackageId).$(PackageVersion).snupkg' -o './../../packed/$(Configuration)/$(PackageId).$(PackageVersion).snupkg' -sz -s -ni"
+      WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="NO_COLOR=NO_COLOR" />
+  </Target>
+
+  <PropertyGroup Condition="'$(IsBenchmarkProject)' != 'true'">
+    <IsBenchmarkProject>false</IsBenchmarkProject>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(IsBenchmarkProject)">
+    <OutputType>exe</OutputType>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <!-- ^^^ This option should be revisited when changing BenchmarkDotNet version.
+    https://github.com/dotnet/BenchmarkDotNet/blob/v0.15.8/README.md?plain=1#L115 -->
+  </PropertyGroup>
+  <ItemGroup Condition="$(IsBenchmarkProject)">
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
+  </ItemGroup>
+
+  <!-- These settings should not be modified by packages. (?) -->
+  <PropertyGroup>
+    <DebugType>portable</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- This is either not needed or already handled by Write-AssemblyMetadata.ps1. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <!-- Guards are manually opt-out. -->
+    <Features>strict</Features><!-- https://github.com/dotnet/roslyn/issues/29319 -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <WarningLevel>9999</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- We have our own schedule of deprecation. -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true'">
+    <IsTestProject>false</IsTestProject>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(IsTestProject) Or $(IsBenchmarkProject)">
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(IsTestProject) And $([MSBuild]::IsOSPlatform('Windows'))">
+    <DefineConstants>$(DefineConstants);TEST_OS_Windows</DefineConstants>
+  </PropertyGroup>
+
+</Project>
