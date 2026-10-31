@@ -38,10 +38,10 @@ Copy-Item -LiteralPath "$PSScriptRoot/Renouveau.Caffeine.ForPowerShell.Prepare.p
 };
 If ($Error.Count -ne $PrevError) { Return; }
 
+If ($Configuration -ne 'Release') { Return; }
+
 Compress-PSResource -Path "$PSScriptRoot/bin/$Configuration/PSModuleLayout" -DestinationPath "$PSScriptRoot/bin/$Configuration";
 If ($Error.Count -ne $PrevError) { Return; }
-
-If ($Configuration -ne 'Release') { Return; }
 
 $local:NuPkgSource = @(Get-ChildItem -LiteralPath "$PSScriptRoot/bin/$Configuration" -Filter '*.nupkg');
 If ($local:NuPkgSource.Count -ne 1)
