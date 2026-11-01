@@ -71,7 +71,8 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
         // If JIT knew Win32 and multi-threaded code *too* well, it could infer that
         // (for certainty, say when `flags` is `DoNotIdleDisplay` to avoid complications with `DoNotSleep`)
         // `this` is unused after `site.WorkerThread.Start(site)` succeeds,
-        // as the remaining code will not fail (so `catch` becomes unreachable),
+        // as the remaining code will not fail
+        // (so `this.Dispose()` in `catch` becomes unreachable),
         // so it could choose to run the finalizer before the constructor enters
         // the critical section awaiting the initial call to `SetThreadExecutionState`.
         // That race would be very bad!
