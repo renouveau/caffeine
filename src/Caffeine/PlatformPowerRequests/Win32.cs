@@ -85,6 +85,19 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
       WorkerThreadSite? site = Interlocked.Exchange(ref site_, null);
       if (site is null)
         return;
+      // .NET Framework:
+      // When the finalizer is called for shutdown / AppDomain unload,
+      // the worker thread, if executing, is aborted, which could happen
+      // in the implicit `finally` right before exiting from monitor `site`.
+      // If we attempt to enter `site` below, we deadlock.
+      // Also, upon shutdown / AppDomain unload, we might be racing with
+      // the half-run aborted constructor call, so let's just back out.
+      if (Environment.HasShutdownStarted)
+        return;
+      // .NET Core / .NET 5+:
+      // The runtime does not attempt finalization upon process exit
+      // and non-current threads cannot be aborted via `Thread.Abort`.
+      // There is no danger of deadlock below.
       lock (site)
       {
         site.ShouldExit = true;
