@@ -1,7 +1,7 @@
 @{
 
 # RootModule = ''
-ModuleVersion = '0.1.0'
+ModuleVersion = '0.1.1'
 # CompatiblePSEditions = @()
 GUID = '22b8071a-405b-41e3-961f-be03c1ce8a26'
 
@@ -39,7 +39,7 @@ PrivateData = @{
     LicenseUri = 'https://github.com/renouveau/caffeine/blob/main/LICENSE'
     ProjectUri = 'https://github.com/renouveau/caffeine'
     IconUri = 'https://raw.githubusercontent.com/renouveau/caffeine/refs/heads/main/src/ForPowerShell/icon.png'
-    ReleaseNotes = 'Initial release, currently only supporting Windows.'
+    ReleaseNotes = 'Improved thread-safety during shutdown/unload in .NET Framework. Currently only supporting Windows.'
     # Prerelease = ''
     RequireLicenseAcceptance = $true
     # ExternalModuleDependencies = @()
