@@ -19,7 +19,8 @@ namespace Renouveau.Caffeine
   /// All members of this class are thread-safe.
   /// It is <strong>not</strong> suitable for use in SQL Server
   /// or any hosted environment which does not map managed threads one-to-one with unmanaged threads.
-  /// It is also <strong>not</strong> suitable when the thread might be aborted.
+  /// It is also <strong>not</strong> suitable when the thread calling creation methods might be aborted.
+  /// (Using it in unloadable application domains, if the thread is never aborted inside creation methods, is fine.)
   /// A client application cannot meaningfully derive from this class.
   /// </summary>
   public abstract class PowerRequest : IDisposable
