@@ -1,7 +1,7 @@
 @{
 
 RootModule = 'RnvPs.Caffeine.psm1'
-ModuleVersion = '0.1.1'
+ModuleVersion = '0.1.2'
 # CompatiblePSEditions = @()
 GUID = '22b8071a-405b-41e3-961f-be03c1ce8a26'
 
@@ -39,7 +39,7 @@ PrivateData = @{
     LicenseUri = 'https://github.com/renouveau/caffeine/blob/main/LICENSE'
     ProjectUri = 'https://github.com/renouveau/caffeine'
     IconUri = 'https://raw.githubusercontent.com/renouveau/caffeine/refs/heads/main/src/ForPowerShell/icon.png'
-    ReleaseNotes = 'Improved thread-safety during shutdown/unload in .NET Framework. Currently only supporting Windows.'
+    ReleaseNotes = 'Fixed a bug causing the advanced function to be unavailable if the module was first loaded when executing in a non-global scope. Currently only supporting Windows.'
     # Prerelease = ''
     RequireLicenseAcceptance = $true
     # ExternalModuleDependencies = @()
