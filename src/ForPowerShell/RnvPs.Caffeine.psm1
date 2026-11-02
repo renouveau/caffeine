@@ -8,10 +8,6 @@ https://github.com/renouveau/caffeine
 
 #>
 
-$null = & {
-  Add-Type -LiteralPath "$PSScriptRoot/Renouveau.Caffeine.dll";
-};
-
 Function Invoke-CommandAwake
 {
 <#
@@ -127,3 +123,5 @@ Finally
 }
 
 }
+
+Export-ModuleMember -Function 'Invoke-CommandAwake';

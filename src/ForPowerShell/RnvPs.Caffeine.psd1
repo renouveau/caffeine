@@ -1,6 +1,6 @@
 @{
 
-# RootModule = ''
+RootModule = 'RnvPs.Caffeine.psm1'
 ModuleVersion = '0.1.1'
 # CompatiblePSEditions = @()
 GUID = '22b8071a-405b-41e3-961f-be03c1ce8a26'
@@ -18,8 +18,8 @@ PowerShellVersion = '5.1'
 # ProcessorArchitecture = ''
 
 # RequiredModules = @()
-# RequiredAssemblies = @()
-ScriptsToProcess = @('RnvPs.Caffeine.Prepare.ps1')
+RequiredAssemblies = @('Renouveau.Caffeine.dll')
+# ScriptsToProcess = @()
 # TypesToProcess = @()
 # FormatsToProcess = @()
 # NestedModules = @()
