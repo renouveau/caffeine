@@ -19,11 +19,20 @@ namespace Renouveau.Caffeine
 {
   /// <summary>
   /// Represents a potentially active power request.
-  /// All members of this class are thread-safe.
+  /// <list type="bullet">
+  /// <item>
+  /// All public members, as well as the finalizer, of this class are
+  /// thread-safe and safe before/during/after disposal/finalization.
+  /// </item>
+  /// <item>
   /// It is <strong>not</strong> suitable for use in SQL Server
   /// or any hosted environment which does not map managed threads one-to-one with unmanaged threads.
+  /// </item>
+  /// <item>
   /// It is also <strong>not</strong> suitable when the thread calling creation methods might be aborted.
   /// (Using it in unloadable application domains, if the thread is never aborted inside creation methods, is fine.)
+  /// </item>
+  /// </list>
   /// A client application cannot meaningfully derive from this class.
   /// </summary>
   public abstract class PowerRequest : IDisposable
