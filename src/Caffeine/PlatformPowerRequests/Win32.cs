@@ -100,12 +100,12 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
     Retry:
       try
       {
-      lock (site)
-      {
-        site.ShouldExit = true;
-        // Notify the worker to exit.
-        Monitor.PulseAll(site);
-      }
+        lock (site)
+        {
+          site.ShouldExit = true;
+          // Notify the worker to exit.
+          Monitor.PulseAll(site);
+        }
       }
       catch (ThreadInterruptedException tie)
       {
