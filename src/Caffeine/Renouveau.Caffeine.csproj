@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net461;net7.0</TargetFrameworks>
     <OutputType>library</OutputType>
     <RootNamespace>Renouveau.Caffeine</RootNamespace>
     <!-- project friendly name = file description (properties) -->
@@ -23,5 +23,9 @@
   </PropertyGroup>
 
   <Import Project="./../sln.csproj.xml" />
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
+    <DefineConstants>$(DefineConstants);IS_Windows_only</DefineConstants>
+  </PropertyGroup>
 
 </Project>

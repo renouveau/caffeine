@@ -8,9 +8,12 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Renouveau.Caffeine.PlatformPowerRequests;
+
+#if !IS_Windows_only
+using System.Runtime.InteropServices;
+#endif
 
 namespace Renouveau.Caffeine
 {
@@ -104,7 +107,11 @@ namespace Renouveau.Caffeine
     {
       if ((minimum | preferred) != preferred)
         throw new ArgumentException("'" + nameof(minimum) + "' is not a subset of '" + nameof(preferred) + "'.");
+#if IS_Windows_only
+      return Win32.Create(preferred, minimum);
+#else
       return PlatformCreate(preferred, minimum);
+#endif
     }
 
     /// <summary>
@@ -125,6 +132,8 @@ namespace Renouveau.Caffeine
       return Create(required, required);
     }
 
+#if !IS_Windows_only
+
     private static readonly Func<PowerRequestFlags, PowerRequestFlags, PowerRequest> PlatformCreate = CreatePlatformCreate();
 
     private static Func<PowerRequestFlags, PowerRequestFlags, PowerRequest> CreatePlatformCreate()
@@ -135,5 +144,8 @@ namespace Renouveau.Caffeine
         return new Func<PowerRequestFlags, PowerRequestFlags, PowerRequest>(Win32.Create);
       return new Func<PowerRequestFlags, PowerRequestFlags, PowerRequest>(NoOp.Create);
     }
+
+#endif
+
   }
 }

@@ -6,6 +6,8 @@
 
 #nullable enable
 
+#if !IS_Windows_only
+
 using System;
 using System.Threading;
 
@@ -32,3 +34,5 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
     private protected override void Dispose(bool disposing) { }
   }
 }
+
+#endif

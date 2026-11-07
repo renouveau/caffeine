@@ -115,9 +115,11 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
     /// </summary>
     private sealed class WorkerThreadSite
     {
+#pragma warning disable SYSLIB1054 // There's no marshaling so LibraryImport is pointless.
       [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
       [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
       private static extern uint SetThreadExecutionState(uint esFlags);
+#pragma warning restore SYSLIB1054
 
       internal readonly uint BareFlags;
       internal bool ShouldExit;
@@ -136,10 +138,10 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
 
       private static readonly ParameterizedThreadStart ParamThreadStart = WorkerMethod;
 
-      private static void WorkerMethod(object obj)
+      private static void WorkerMethod(object? obj)
       {
         const uint EsContinuous = 0x80000000u;
-        WorkerThreadSite site = (WorkerThreadSite)obj;
+        WorkerThreadSite site = (WorkerThreadSite)obj!;
         lock (site)
         {
           // Apply the flags and save the error code.
