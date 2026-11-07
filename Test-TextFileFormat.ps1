@@ -21,7 +21,7 @@ Begin
 {
   $CsHeader = [regex]::new('^// SPDX-FileCopyrightText: [^\n]+\n// SPDX-License-Identifier: [a-zA-Z0-9\.-]+\n');
   $TextExts = [System.Collections.Generic.HashSet[string]]::new();
-  @('.cs', '.editorconfig', '.slnx', '.xml', '.csproj', '.md', '.gitignore', '.ps1', '.json', '.config', '.txt', '.runsettings', '.psd1', '.ps1xml') |
+  @('.cs', '.editorconfig', '.slnx', '.xml', '.csproj', '.md', '.gitignore', '.ps1', '.json', '.config', '.txt', '.runsettings', '.psd1', '.ps1xml', '.psm1') |
     ForEach-Object { $TextExts.Add($_.ToLowerInvariant()) } |
     Out-Null;
   $TextFiles = [System.Collections.Generic.HashSet[string]]::new();
