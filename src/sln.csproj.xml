@@ -8,7 +8,7 @@
     <HighEntropyVA>true</HighEntropyVA>
     <LangVersion>14.0</LangVersion>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <!-- solution-level metadata -->
