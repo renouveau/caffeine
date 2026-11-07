@@ -33,16 +33,15 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
 
     private Win32(PowerRequestFlags flags)
     {
+      if (flags == PowerRequestFlags.None)
+      {
+        Dispose();
+        return;
+      }
+      Interlocked.Exchange(ref flags_, (int)(uint)flags);
+      Interlocked.Exchange(ref site_, null);
       try
       {
-        Interlocked.Exchange(ref flags_, (int)(uint)flags);
-        Interlocked.Exchange(ref site_, null);
-        if (flags == PowerRequestFlags.None)
-        {
-          Dispose();
-          // ^^^ The only interesting effect is it suppresses finalization of `this`.
-          return;
-        }
         // Create the worker and wait for its initial `SetThreadExecutionState`.
         // Currently, all supported flags coincide with its Win32 API integral values.
         WorkerThreadSite site = new WorkerThreadSite((uint)flags);
