@@ -9,7 +9,6 @@
 #if !IS_Windows_only
 
 using System;
-using System.Threading;
 
 namespace Renouveau.Caffeine.PlatformPowerRequests
 {
@@ -29,7 +28,7 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
 
     private static readonly NoOp Instance = new NoOp();
 
-    private NoOp() { Interlocked.Exchange(ref flags_, 0); GC.SuppressFinalize(this); }
+    private NoOp() { Dispose(); }
 
     private protected override void Dispose(bool disposing) { }
   }
