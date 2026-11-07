@@ -33,7 +33,7 @@ Begin
     'src/.vs',
     $null
   ) | ForEach-Object { If ($_ -ne $null) {
-    New-Item "$PSScriptRoot/$_" -Type 'Directory' -Force -ErrorAction 'Ignore';
+    New-Item ([System.IO.Path]::Combine($PSScriptRoot, $_)) -Type 'Directory' -Force -ErrorAction 'Ignore';
   } } | Out-Null;
 }
 
@@ -46,7 +46,7 @@ End
     'src/*/obj',
     $null
   ) | ForEach-Object { If ($_ -ne $null) {
-    Remove-Item "$PSScriptRoot/$_" -Force -Recurse;
+    Remove-Item ([System.IO.Path]::Combine($PSScriptRoot, $_)) -Force -Recurse;
   } };
   Write-Verbose 'Remove-IgnoredFiles.ps1: Done removing.';
   $local:GitCleanResult = git clean --dry-run -x -- "$PSScriptRoot" 2>&1;

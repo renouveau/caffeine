@@ -339,7 +339,7 @@ Try
   Write-Verbose "    new *.psmdcp name = $($Hash.Substring(0, 32)).psmdcp";
   # Edit the *.psmdcp file to keep track of last modification.
   $ScriptIdentifier = 'Convert-NupkgToDet.ps1, Hash=';
-  $ScriptIdentifier += (Get-FileHash -LiteralPath "$PSScriptRoot/Convert-NupkgToDet.ps1" -Algorithm SHA256).Hash.ToLowerInvariant();
+  $ScriptIdentifier += (Get-FileHash -LiteralPath ([System.IO.Path]::Combine($PSScriptRoot, 'Convert-NupkgToDet.ps1')) -Algorithm SHA256).Hash.ToLowerInvariant();
   $ScriptIdentifier += ', PSVersion=' + $PSVersionTable.PSVersion.ToString();
   $ScriptIdentifier += ', CLRVersion=' + [System.Environment]::Version.ToString();
   Write-Debug "Convert-NupkgToDet.ps1: About to edit *.psmdcp at`n$Psmdcp`nto add script identifier`n$ScriptIdentifier";

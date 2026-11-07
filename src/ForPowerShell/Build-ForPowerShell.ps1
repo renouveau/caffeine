@@ -15,6 +15,15 @@ Param
   [string]$Configuration = '*'
 )
 
+# Realistically this script only resides in a directory named `ForPowerShell`.
+# Note that "going up" is not fully safe (semantically) unless we confirm
+# that this script lives at level-2+ subdirectory of the root.
+If ($PSScriptRoot.EndsWith('/') -or $PSScriptRoot.EndsWith('\'))
+{
+  Write-Error 'This script is not safe when $PSScriptRoot ends with / or \.';
+  Return;
+}
+
 If ($Configuration -eq '*')
 {
   & "$PSScriptRoot/Build-ForPowerShell.ps1" -Configuration 'Debug';
