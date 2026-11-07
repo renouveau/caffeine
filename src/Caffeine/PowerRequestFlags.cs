@@ -26,7 +26,7 @@ namespace Renouveau.Caffeine
     /// <list type="bullet">
     /// <item>
     /// This flag is supported on Windows.
-    /// If Connected/Modern Standby is enabled and the device is on battery,
+    /// If Connected Standby is enabled and the device is on battery,
     /// this request is ignored by Windows
     /// 5 minutes after the sleep idle timer expires.
     /// </item>
