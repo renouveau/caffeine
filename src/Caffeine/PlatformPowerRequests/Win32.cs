@@ -144,7 +144,11 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
         ShouldExit = false;
         WorkerThreadStatus = 0;
         Win32ErrorCode = 0;
-        WorkerThread = new Thread(ParamThreadStart) { IsBackground = true };
+        WorkerThread = new Thread(ParamThreadStart)
+        {
+          IsBackground = true,
+          Name = "Renouveau.Caffeine.PowerRequest",
+        };
       }
 
       private static readonly ParameterizedThreadStart ParamThreadStart = WorkerMethod;
