@@ -13,4 +13,12 @@ Per the documentation of [`PowerSetRequest`](https://learn.microsoft.com/en-us/w
 
 Moreover, away mode requested by `SetThreadExecutionState` is still in effect when the system wakes up from sleep after being put to sleep by me (choosing Sleep in “Start”; all on battery), as reported by `powercfg /requests`, so it is not subject to termination after user-initiated sleep, which `PowerSetRequest` is documented to be subject to.
 
-The tests show `SetThreadExecutionState` achieves the goal.  I have no plan to switch the calls to `PowerCreateRequest` series, until I get time to test its behavior.
+~~The tests show `SetThreadExecutionState` achieves the goal.  I have no plan to switch the calls to `PowerCreateRequest` series, until I get time to test its behavior.~~ Further tests showed the following behavior on Modern Standby on battery (idle time-out is 3 minutes):
+
+- if only `ES_CONTINUOUS | ES_DISPLAY_REQUIRED` are set, the display is not turned off for the duration of the state and it is turned off 3 minutes after the state is cleared;
+- if only `ES_CONTINUOUS | ES_SYSTEM_REQUIRED` are set, the display turns off after 3 minutes and execution continues for another 5 minutes, then execution suspends;
+- if only `ES_CONTINUOUS | ES_AWAY_MODE_REQUIRED` are set, the display turns off and execution suspends after 3 minutes.
+
+In the latter cases, after waking up, the request is still shown in `powercfg /requests`.  Therefore, the execution states set by `SetThreadExecutionState` have the ignoring semantics of `PowerSetRequest`, but they’re not *terminated*.
+
+The documentation of `PowerSetRequest` says system request must be taken, when display request is taken, to keep the screen on.  In `SetThreadExecutionState`, a display request by itself keeps the screen on.  Further testing of `PowerSetRequest` is needed (to see if the documentation is in fact inaccurate) before I switch to it.

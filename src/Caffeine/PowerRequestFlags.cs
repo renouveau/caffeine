@@ -23,24 +23,44 @@ namespace Renouveau.Caffeine
     None = 0x0,
     /// <summary>
     /// Prevents the system from idling to sleep.
-    /// This flag is supported only on Windows.
+    /// <list type="bullet">
+    /// <item>
+    /// This flag is supported on Windows.
+    /// If Connected/Modern Standby is enabled and the device is on battery,
+    /// this request is ignored by Windows
+    /// 5 minutes after the sleep idle timer expires.
+    /// </item>
+    /// <item>This flag is unsupported elsewhere.</item>
+    /// </list>
     /// </summary>
     DoNotIdleSleep = 0x1,
     /// <summary>
     /// Prevents the system from idling to turn off the display.
-    /// This flag is supported only on Windows.
+    /// <list type="bullet">
+    /// <item>
+    /// This flag is supported on Windows.
+    /// </item>
+    /// <item>This flag is unsupported elsewhere.</item>
+    /// </list>
     /// </summary>
     DoNotIdleDisplay = 0x2,
     /// <summary>
     /// Prevents the system from idling to switch off the disk.
     /// This flag is not useful for SSD.
-    /// This flag is not supported on any platform.
+    /// <list type="bullet">
+    /// <item>This flag is not supported on any platform.</item>
+    /// </list>
     /// </summary>
     DoNotIdleDisk = 0x4,
     /// <summary>
     /// Prevents the system from sleeping even if the user initiates a sleep,
     /// such as closing the lid of the laptop or (Windows) choosing Sleep in Start.
-    /// This flag is supported only on Windows.
+    /// <list type="bullet">
+    /// <item>
+    /// This flag is supported on Windows.
+    /// If S3 sleep is not enabled, this flag is ignored by Windows.
+    /// </item>
+    /// </list>
     /// </summary>
     DoNotSleep = 0x40,
   }
