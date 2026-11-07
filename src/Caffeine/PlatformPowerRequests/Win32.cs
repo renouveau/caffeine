@@ -36,7 +36,7 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
       try
       {
         Interlocked.Exchange(ref flags_, (int)(uint)flags);
-        site_ = null;
+        Interlocked.Exchange(ref site_, null);
         if (flags == PowerRequestFlags.None)
         {
           Dispose();
@@ -46,7 +46,7 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
         // Create the worker and wait for its initial `SetThreadExecutionState`.
         // Currently, all supported flags coincide with its Win32 API integral values.
         WorkerThreadSite site = new WorkerThreadSite((uint)flags);
-        site_ = site;
+        Interlocked.Exchange(ref site_, site);
         site.WorkerThread.Start(site);
         bool failed;
         int win32err;
