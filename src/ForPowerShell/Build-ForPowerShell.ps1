@@ -31,8 +31,11 @@ $local:PrevError = $Error.Count;
 $null = & {
 Remove-Item -LiteralPath "$PSScriptRoot/bin/$Configuration" -Force -Recurse -ErrorAction 'Ignore';
 New-Item -Path "$PSScriptRoot/bin/$Configuration" -Name 'PSModuleLayout' -ItemType 'Directory' -Force;
-Get-ChildItem -LiteralPath "$PSScriptRoot/../Caffeine/bin/$Configuration/netstandard2.0" -Filter '*.dll' |
-  Copy-Item -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
+@('net461', 'net7.0') | ForEach-Object {
+  New-Item -Path "$PSScriptRoot/bin/$Configuration/PSModuleLayout" -Name $_ -ItemType 'Directory' -Force;
+  Get-ChildItem -LiteralPath "$PSScriptRoot/../Caffeine/bin/$Configuration/$_" -Filter '*.dll' |
+    Copy-Item -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/$_/" -Force;
+};
 Copy-Item -LiteralPath "$PSScriptRoot/RnvPs.Caffeine.psd1" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
 Copy-Item -LiteralPath "$PSScriptRoot/RnvPs.Caffeine.psm1" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/" -Force;
 Copy-Item -LiteralPath "$PSScriptRoot/../../LICENSE" -Destination "$PSScriptRoot/bin/$Configuration/PSModuleLayout/license.txt" -Force;

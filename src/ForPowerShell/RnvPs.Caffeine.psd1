@@ -18,7 +18,7 @@ PowerShellVersion = '5.1'
 # ProcessorArchitecture = ''
 
 # RequiredModules = @()
-RequiredAssemblies = @('Renouveau.Caffeine.dll')
+# RequiredAssemblies = @()
 # ScriptsToProcess = @()
 # TypesToProcess = @()
 # FormatsToProcess = @()

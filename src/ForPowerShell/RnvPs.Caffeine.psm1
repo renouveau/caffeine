@@ -8,6 +8,36 @@ https://github.com/renouveau/caffeine
 
 #>
 
+& { [CmdletBinding()] Param()
+
+$local:clrv = [System.Environment]::Version;
+
+If ($false)
+{
+  # This fake branch improves Git diff when adding future .NET versions.
+}
+ElseIf ($clrv.Major -ge 7)
+{
+  $clrv = 'net7.0';
+}
+ElseIf ($clrv -ge [System.Version]::new(4, 0, 30319, 42000) -and
+  $PSVersionTable.PSEdition -eq 'Desktop' -and
+  [System.Version]::new((Get-Item -LiteralPath ([object].Assembly.Location)).VersionInfo.ProductVersion) -ge [System.Version]::new(4, 6, 1))
+{
+  $clrv = 'net461';
+}
+Else
+{
+  Write-Error 'RnvPs.Caffeine: This module requires .NET Framework 4.6.1+ or .NET 7.0+.';
+  Return;
+}
+
+Write-Verbose "RnvPs.Caffeine: CLR = $clrv";
+
+Add-Type -LiteralPath ([System.IO.Path]::Combine($PSScriptRoot, $clrv, 'Renouveau.Caffeine.dll'));
+
+} -ErrorAction 'Stop' | Out-Null;
+
 Function Invoke-CommandAwake
 {
 <#
