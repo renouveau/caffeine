@@ -149,7 +149,7 @@ Try
   {
     Write-Verbose "Invoke-CommandAwake: active requests: $($request.ActiveRequests)";
   }
-  If ($request -ne $null)
+  If ($null -ne $request)
   {
     & { [CmdletBinding()] Param()
       Invoke-Command -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList -InputObject $InputObject;
@@ -158,7 +158,7 @@ Try
 }
 Finally
 {
-  If ($request -ne $null)
+  If ($null -ne $request)
   {
     $request.Dispose();
   }
