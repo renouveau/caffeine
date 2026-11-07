@@ -42,16 +42,28 @@ Function Invoke-CommandAwake
 {
 <#
 .SYNOPSIS
-Requests that the system idle timers not time out while running a command.
+Runs a script block while requesting that the system idle timers not time out.
+
+.DESCRIPTION
+Before the script block is invoked, `Invoke-CommandAwake` makes persistent power request(s) so that the system do not idle while the script runs.  When the script completes (normally or exceptionally), the request(s) is/are cancelled.  The command-related parameters are similar to the simplest overload of `Invoke-Command`.
+
+.LINK
+https://github.com/renouveau/caffeine
 
 .PARAMETER NoIdleSleep
 Prevents the system from sleeping automatically.
+- This is supported on Windows.  If Connected Standby is enabled and the device on battery power, this request is ignored 5 minutes after the system idle timer times out.
+- This is not supported elsewhere.
 
 .PARAMETER NoIdleDisplay
 Prevents the display from being turn off automatically.
+- This is supported on Windows.
+- This is not supported elsewhere.
 
 .PARAMETER NoSleep
 Prevents the system from entering sleep even if the user initiates it.
+- This is supported on Windows.  However, it is ignored unless the system uses S3 sleep.
+- This is not supported elsewhere.
 
 .PARAMETER Permissive
 Runs the command even if one or more requests are not supported.  By default, the execution fails immediately if one or more requests are not supported.  Specifying this switch does not allow the command to run when the request(s) fail(s) for other reasons (such as a failure of native API call).
