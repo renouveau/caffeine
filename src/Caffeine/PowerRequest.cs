@@ -98,6 +98,9 @@ namespace Renouveau.Caffeine
     /// loads a lower version at run-time,
     /// and uses a flag the loaded version does not understand.
     /// </exception>
+    /// <exception cref="ThreadInterruptedException">
+    /// The request is guaranteed to be cancelled if the thread is interrupted during this call.
+    /// </exception>
     /// <exception cref="PowerRequestException">
     /// For any other exceptional condition in making the request.
     /// </exception>

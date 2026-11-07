@@ -59,6 +59,11 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
         if (failed)
           throw new Win32Exception(win32err);
       }
+      catch (ThreadInterruptedException)
+      {
+        Dispose();
+        throw;
+      }
       catch (Exception ex)
       {
         Dispose();
@@ -66,15 +71,8 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
       }
       finally
       {
-        // Robustly prevent finalization before the constructor is about to return.
-        // If JIT knew Win32 and multi-threaded code *too* well, it could infer that
-        // (for certainty, say when `flags` is `DoNotIdleDisplay` to avoid complications with `DoNotSleep`)
-        // `this` is unused after `site.WorkerThread.Start(site)` succeeds,
-        // as the remaining code will not fail
-        // (so `this.Dispose()` in `catch` becomes unreachable),
-        // so it could choose to run the finalizer before the constructor enters
-        // the critical section awaiting the initial call to `SetThreadExecutionState`.
-        // That race would be very bad!
+        // Prevent finalization until the constructor is about to return,
+        // without having to reason about the complex path above.
         GC.KeepAlive(this);
       }
     }
@@ -98,12 +96,26 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
       // The runtime does not attempt finalization upon process exit
       // and non-current threads cannot be aborted via `Thread.Abort`.
       // There is no danger of deadlock below.
+      ThreadInterruptedException? caught = null;
+    Retry:
+      try
+      {
       lock (site)
       {
         site.ShouldExit = true;
         // Notify the worker to exit.
         Monitor.PulseAll(site);
       }
+      }
+      catch (ThreadInterruptedException tie)
+      {
+        caught = tie;
+        goto Retry;
+      }
+      if (caught is not null)
+        throw caught;
+      // Note that throwing skips `GC.SuppressFinalize(this);`,
+      // but we're ready for that (the finalizer will just be no-op).
     }
 
     /// <summary>
@@ -170,6 +182,9 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
           }
           _ = SetThreadExecutionState(EsContinuous);
         }
+        // AFAIK it's not possible to interrupt this thread using
+        // "normal" managed code (i.e., no reflection/debugger).
+        // 以直报怨，何以报德？
       }
     }
   }
