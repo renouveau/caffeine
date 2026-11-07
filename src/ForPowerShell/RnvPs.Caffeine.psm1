@@ -111,11 +111,11 @@ Param
   [Alias('Args')]
   [object[]]$ArgumentList,
   [PSObject]$InputObject,
-  [switch]$NoUsage,
   [switch]$NoIdleSleep,
   [switch]$NoIdleDisplay,
   [switch]$NoSleep,
-  [switch]$Permissive
+  [switch]$Permissive,
+  [switch]$NoUsage
 )
 
 $private:preferred = [Renouveau.Caffeine.PowerRequestFlags]::None;
