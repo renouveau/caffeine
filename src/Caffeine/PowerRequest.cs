@@ -15,6 +15,8 @@ using Renouveau.Caffeine.PlatformPowerRequests;
 using System.Runtime.InteropServices;
 #endif
 
+#pragma warning disable CA1063 // We have full control over `IDisposable.Dispose` implementations.
+
 namespace Renouveau.Caffeine
 {
   /// <summary>
@@ -37,6 +39,8 @@ namespace Renouveau.Caffeine
   /// </summary>
   public abstract class PowerRequest : IDisposable
   {
+    private protected abstract void PreventOutsiders();
+
     private protected int flags_;
 
     /// <summary>
@@ -63,20 +67,7 @@ namespace Renouveau.Caffeine
     /// Terminates the power request if it is active.
     /// This method is idempotent.
     /// </summary>
-    public void Dispose()
-    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-
-#pragma warning disable CA1063 // Allow this method to be less visible than `protected`.
-    private protected abstract void Dispose(bool disposing);
-#pragma warning restore CA1063
-
-    /// <summary>
-    /// Terminates the power request if it is active.
-    /// </summary>
-    ~PowerRequest() { Dispose(false); }
+    public abstract void Dispose();
 
     /// <summary>
     /// Tries to create a power request.
@@ -161,3 +152,5 @@ namespace Renouveau.Caffeine
 
   }
 }
+
+#pragma warning restore CA1063

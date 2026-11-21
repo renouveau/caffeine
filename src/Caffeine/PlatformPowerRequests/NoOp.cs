@@ -14,6 +14,8 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
 {
   internal sealed class NoOp : PowerRequest
   {
+    private protected sealed override void PreventOutsiders() { }
+
     /// <summary>
     /// Creates a power request for an unsupported platform.
     /// </summary>
@@ -28,9 +30,9 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
 
     private static readonly NoOp Instance = new NoOp();
 
-    private NoOp() { Dispose(); }
+    private NoOp() { }
 
-    private protected override void Dispose(bool disposing) { }
+    public sealed override void Dispose() { }
   }
 }
 

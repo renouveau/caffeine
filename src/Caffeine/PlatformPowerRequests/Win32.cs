@@ -15,6 +15,8 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
 {
   internal sealed class Win32 : PowerRequest
   {
+    private protected sealed override void PreventOutsiders() { }
+
     /// <summary>
     /// Creates a power request for Windows XP or later.
     /// </summary>
@@ -77,10 +79,11 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
       }
     }
 
-    private protected override void Dispose(bool disposing)
+    public sealed override void Dispose()
     {
       Interlocked.Exchange(ref flags_, 0);
       WorkerThreadSite? site = Interlocked.Exchange(ref site_, null);
+      GC.SuppressFinalize(this);
       if (site is null)
         return;
       // .NET Framework:
@@ -114,9 +117,9 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
       }
       if (caught is not null)
         throw caught;
-      // Note that throwing skips `GC.SuppressFinalize(this);`,
-      // but we're ready for that (the finalizer will just be no-op).
     }
+
+    ~Win32() { Dispose(); }
 
     /// <summary>
     /// It's important to use a separate object as the site seen by the thread method,
