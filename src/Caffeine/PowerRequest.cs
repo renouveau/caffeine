@@ -98,7 +98,8 @@ namespace Renouveau.Caffeine
     /// <c><paramref name="minimum"/></c> and <c><paramref name="preferred"/></c>.
     /// </item>
     /// <item>
-    /// If <c><paramref name="reason"/></c> is <c><see langword="null"/></c> or whitespace,
+    /// The string <c><paramref name="reason"/></c> is trimmed if not <c><see langword="null"/></c>.
+    /// If it is <c><see langword="null"/></c> or whitespace,
     /// a default reason string will be used.
     /// </item>
     /// </list>
@@ -121,10 +122,10 @@ namespace Renouveau.Caffeine
     {
       if ((minimum | preferred) != preferred)
         throw new ArgumentException("'" + nameof(minimum) + "' is not a subset of '" + nameof(preferred) + "'.");
-      if (string.IsNullOrWhiteSpace(reason))
+      if ((reason is null) || (reason = reason.Trim()).Length == 0)
         reason = "Renouveau.Caffeine.PowerRequest";
 #if IS_Windows_only
-      return Win32.Create(reason!, preferred, minimum);
+      return Win32.Create(reason, preferred, minimum);
 #else
       return PlatformCreate(reason, preferred, minimum);
 #endif
