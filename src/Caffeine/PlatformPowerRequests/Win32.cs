@@ -45,7 +45,6 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
         Dispose();
         return;
       }
-      int win32error;
       try
       {
         PowerRequestHandle handle = new PowerRequestHandle();
@@ -66,33 +65,20 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
           }
         }
         if (h == default || h == (IntPtr)(-1))
-        {
-          win32error = Marshal.GetLastWin32Error();
-          throw new Win32Exception(win32error);
-        }
+          goto Throw;
         if ((flags & PowerRequestFlags.DoNotIdleSleep) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.SystemRequired) == 0)
-        {
-          win32error = Marshal.GetLastWin32Error();
-          throw new Win32Exception(win32error);
-        }
+          goto Throw;
         if ((flags & PowerRequestFlags.DoNotIdleDisplay) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.DisplayRequired) == 0)
-        {
-          win32error = Marshal.GetLastWin32Error();
-          throw new Win32Exception(win32error);
-        }
+          goto Throw;
         if ((flags & PowerRequestFlags.DoNotSleep) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.AwayModeRequired) == 0)
-        {
-          win32error = Marshal.GetLastWin32Error();
-          throw new Win32Exception(win32error);
-        }
+          goto Throw;
         GC.KeepAlive(handle);
         // ^^^ Ensures that `handle` is not finalized until we're done with `h`.
         Interlocked.Exchange(ref flags_, (int)(uint)flags);
-      }
-      catch (Win32Exception ex)
-      {
-        Dispose();
-        throw new PowerRequestException("An exception occurred when making a power request to Windows.", ex);
+        return;
+      Throw:
+        int win32error = Marshal.GetLastWin32Error();
+        throw new PowerRequestException("An exception occurred when making a power request to Windows.", new Win32Exception(win32error));
       }
       catch
       {
