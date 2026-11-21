@@ -38,14 +38,73 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
 
     private PowerRequestHandle? handle_;
 
-    private Win32(PowerRequestFlags flags)
+    private unsafe Win32(PowerRequestFlags flags, string reason = "?")
     {
-      throw new NotImplementedException();
+      if (flags == PowerRequestFlags.None)
+      {
+        Dispose();
+        return;
+      }
+      int win32error;
+      try
+      {
+        PowerRequestHandle handle = new PowerRequestHandle();
+        Interlocked.Exchange(ref handle_, handle);
+        IntPtr h;
+        fixed (char* preason = reason)
+        {
+          PowerRequestHandle.SimpleReasonContext context = new PowerRequestHandle.SimpleReasonContext(preason);
+          RuntimeHelpers.PrepareConstrainedRegions();
+          // Ensures that the handle ownership is transferred to the critical finalizer object.
+          try
+          {
+          }
+          finally
+          {
+            h = PowerRequestHandle.PowerCreateRequest(&context);
+            Interlocked.Exchange(ref handle.Handle, h);
+          }
+        }
+        if (h == default || h == (IntPtr)(-1))
+        {
+          win32error = Marshal.GetLastWin32Error();
+          throw new Win32Exception(win32error);
+        }
+        if ((flags & PowerRequestFlags.DoNotIdleSleep) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.SystemRequired) == 0)
+        {
+          win32error = Marshal.GetLastWin32Error();
+          throw new Win32Exception(win32error);
+        }
+        if ((flags & PowerRequestFlags.DoNotIdleDisplay) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.DisplayRequired) == 0)
+        {
+          win32error = Marshal.GetLastWin32Error();
+          throw new Win32Exception(win32error);
+        }
+        if ((flags & PowerRequestFlags.DoNotSleep) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.AwayModeRequired) == 0)
+        {
+          win32error = Marshal.GetLastWin32Error();
+          throw new Win32Exception(win32error);
+        }
+        GC.KeepAlive(handle);
+        // ^^^ Ensures that `handle` is not finalized until we're done with `h`.
+        Interlocked.Exchange(ref flags_, (int)(uint)flags);
+      }
+      catch (Win32Exception ex)
+      {
+        Dispose();
+        throw new PowerRequestException("An exception occurred when making a power request to Windows.", ex);
+      }
+      catch
+      {
+        Dispose();
+        throw;
+      }
     }
 
     public sealed override void Dispose()
     {
-      throw new NotImplementedException();
+      Interlocked.Exchange(ref flags_, default);
+      Interlocked.Exchange(ref handle_, null)?.Dispose();
     }
 
     private sealed class PowerRequestHandle : CriticalFinalizerObject, IDisposable
