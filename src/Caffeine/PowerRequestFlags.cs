@@ -33,7 +33,7 @@ namespace Renouveau.Caffeine
     /// <item>This flag is unsupported elsewhere.</item>
     /// </list>
     /// </summary>
-    DoNotIdleSleep = 0x1,
+    NoIdleSleep = 0x1,
     /// <summary>
     /// Prevents the system from idling to turn off the display.
     /// <list type="bullet">
@@ -43,7 +43,7 @@ namespace Renouveau.Caffeine
     /// <item>This flag is unsupported elsewhere.</item>
     /// </list>
     /// </summary>
-    DoNotIdleDisplay = 0x2,
+    NoIdleDisplay = 0x2,
     /// <summary>
     /// Prevents the system from idling to switch off the disk.
     /// This flag is not useful for SSD.
@@ -51,7 +51,7 @@ namespace Renouveau.Caffeine
     /// <item>This flag is not supported on any platform.</item>
     /// </list>
     /// </summary>
-    DoNotIdleDisk = 0x4,
+    NoIdleDisk = 0x4,
     /// <summary>
     /// Prevents the system from sleeping even if the user initiates a sleep,
     /// such as closing the lid of the laptop or (Windows) choosing Sleep in Start.
@@ -62,7 +62,7 @@ namespace Renouveau.Caffeine
     /// </item>
     /// </list>
     /// </summary>
-    DoNotSleep = 0x40,
+    NoSleep = 0x40,
   }
 }
 

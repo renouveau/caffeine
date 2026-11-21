@@ -27,7 +27,7 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
     /// </summary>
     internal new static Win32 Create(string reason, PowerRequestFlags preferred, PowerRequestFlags minimum)
     {
-      const PowerRequestFlags Supported = (PowerRequestFlags.DoNotIdleSleep | PowerRequestFlags.DoNotIdleDisplay | PowerRequestFlags.DoNotSleep);
+      const PowerRequestFlags Supported = (PowerRequestFlags.NoIdleSleep | PowerRequestFlags.NoIdleDisplay | PowerRequestFlags.NoSleep);
       minimum &= ~Supported;
       if (minimum != PowerRequestFlags.None)
         throw new PowerRequestException("The following power request(s) included in '" + nameof(minimum) + "' is/are not supported on Windows: " + minimum.ToString());
@@ -66,11 +66,11 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
         }
         if (h == default || h == (IntPtr)(-1))
           goto Throw;
-        if ((flags & PowerRequestFlags.DoNotIdleSleep) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.SystemRequired) == 0)
+        if ((flags & PowerRequestFlags.NoIdleSleep) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.SystemRequired) == 0)
           goto Throw;
-        if ((flags & PowerRequestFlags.DoNotIdleDisplay) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.DisplayRequired) == 0)
+        if ((flags & PowerRequestFlags.NoIdleDisplay) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.DisplayRequired) == 0)
           goto Throw;
-        if ((flags & PowerRequestFlags.DoNotSleep) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.AwayModeRequired) == 0)
+        if ((flags & PowerRequestFlags.NoSleep) != default && PowerRequestHandle.PowerSetRequest(h, PowerRequestHandle.PowerRequestType.AwayModeRequired) == 0)
           goto Throw;
         GC.KeepAlive(handle);
         // ^^^ Ensures that `handle` is not finalized until we're done with `h`.

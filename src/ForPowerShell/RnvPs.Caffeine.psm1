@@ -123,9 +123,9 @@ Param
 )
 
 $private:preferred = [Renouveau.Caffeine.PowerRequestFlags]::None;
-If ($NoIdleSleep)   { $preferred = $preferred -bor [Renouveau.Caffeine.PowerRequestFlags]::DoNotIdleSleep;   }
-If ($NoIdleDisplay) { $preferred = $preferred -bor [Renouveau.Caffeine.PowerRequestFlags]::DoNotIdleDisplay; }
-If ($NoSleep)       { $preferred = $preferred -bor [Renouveau.Caffeine.PowerRequestFlags]::DoNotSleep;       }
+If ($NoIdleSleep)   { $preferred = $preferred -bor [Renouveau.Caffeine.PowerRequestFlags]::NoIdleSleep;   }
+If ($NoIdleDisplay) { $preferred = $preferred -bor [Renouveau.Caffeine.PowerRequestFlags]::NoIdleDisplay; }
+If ($NoSleep)       { $preferred = $preferred -bor [Renouveau.Caffeine.PowerRequestFlags]::NoSleep;       }
 $private:minimum = $preferred;
 If ($Permissive) { $minimum = [Renouveau.Caffeine.PowerRequestFlags]::None; }
 $private:request = $null;

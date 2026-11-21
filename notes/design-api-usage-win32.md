@@ -10,7 +10,7 @@ I did the following test.
 
 - Device with Connected Standby enabled, on battery.
 - Display/sleep time-outs are 3 minutes.
-- Run PowerShell code `$obj = [Renouveau.Caffeine.PowerRequest]::Create('test', 'DoNotIdleDisplay'); Start-Sleep (10*60+1); Write-Host 1; $obj.Dispose(); Write-Host 2;` and leave the computer still.
+- Run PowerShell code `$obj = [Renouveau.Caffeine.PowerRequest]::Create('test', 'NoIdleDisplay'); Start-Sleep (10*60+1); Write-Host 1; $obj.Dispose(); Write-Host 2;` and leave the computer still.
 
 The result is that the computer does not dim before outputting `1`.  After outputting `2`, it dims the display after 2 minutes 45 seconds, and the display is turned off after another 15 seconds.  This shows `PowerRequestDisplayRequired` alone is sufficient to keep the display on and the computer not enter sleep.
 
