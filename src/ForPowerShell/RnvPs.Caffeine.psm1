@@ -142,20 +142,20 @@ If ($preferred -eq [Renouveau.Caffeine.PowerRequestFlags]::None -and -not $NoUsa
 
 If ($null -ne $Reason)
 {
-  $Reason = $Reason.Trim();
+  $Reason = $Reason.Replace([char]0, [char]32).Trim();
 }
 If ([string]::IsNullOrEmpty($Reason))
 {
-  $Reason = ('' + $ScriptBlock).Trim();
-  If ($Reason.Length -gt 49)
+  $Reason = ('' + $ScriptBlock).Replace([char]0, [char]32).Trim();
+  If ($Reason.Length -eq 0)
   {
-    $Reason = $Reason.Substring(0, 45) + ' ...';
+    $Reason = '& { };';
+  }
+  ElseIf ($Reason.Length -gt 35)
+  {
+    $Reason = $Reason.Substring(0, 35 - 4) + ' ...';
   }
   $Reason = 'Invoke-CommandAwake: ' + $Reason;
-}
-ElseIf ($Reason.Length -gt 70)
-{
-  $Reason = $Reason.Substring(0, 66) + ' ...';
 }
 
 $private:CurrErrActionPref = $ErrorActionPreference;
