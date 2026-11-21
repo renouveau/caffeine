@@ -25,7 +25,7 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
     /// <summary>
     /// Creates a power request for Windows 7 or later.
     /// </summary>
-    internal new static Win32 Create(PowerRequestFlags preferred, PowerRequestFlags minimum)
+    internal new static Win32 Create(string reason, PowerRequestFlags preferred, PowerRequestFlags minimum)
     {
       const PowerRequestFlags Supported = (PowerRequestFlags.DoNotIdleSleep | PowerRequestFlags.DoNotIdleDisplay | PowerRequestFlags.DoNotSleep);
       minimum &= ~Supported;
@@ -33,12 +33,12 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
         throw new PowerRequestException("The following power request(s) included in '" + nameof(minimum) + "' is/are not supported on Windows: " + minimum.ToString());
       // Always use `Win32` on Windows (instead of `NoOp` sometimes)
       // to be friendly with devirtualization.
-      return new Win32(preferred & Supported);
+      return new Win32(reason, preferred & Supported);
     }
 
     private PowerRequestHandle? handle_;
 
-    private unsafe Win32(PowerRequestFlags flags, string reason = "?")
+    private unsafe Win32(string reason, PowerRequestFlags flags) : base(reason)
     {
       if (flags == PowerRequestFlags.None)
       {

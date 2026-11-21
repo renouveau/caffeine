@@ -61,7 +61,16 @@ namespace Renouveau.Caffeine
       }
     }
 
-    private protected PowerRequest() { }
+    /// <summary>
+    /// Gets the reason for this request.
+    /// This property is never <c><see langword="null"/></c>.
+    /// </summary>
+    public string Reason { get; }
+
+    private protected PowerRequest(string reason)
+    {
+      Reason = reason;
+    }
 
     /// <summary>
     /// Terminates the power request if it is active.
@@ -87,6 +96,10 @@ namespace Renouveau.Caffeine
     /// If an object is returned, its set of active requests is always between
     /// <c><paramref name="minimum"/></c> and <c><paramref name="preferred"/></c>.
     /// </item>
+    /// <item>
+    /// If <c><paramref name="reason"/></c> is <c><see langword="null"/></c> or whitespace,
+    /// a default reason string will be used.
+    /// </item>
     /// </list>
     /// </summary>
     /// <exception cref="ArgumentException">
@@ -106,46 +119,48 @@ namespace Renouveau.Caffeine
     /// </exception>
     /// <returns>Never <c><see langword="null"/></c>.</returns>
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static PowerRequest Create(PowerRequestFlags preferred, PowerRequestFlags minimum)
+    public static PowerRequest Create(string? reason, PowerRequestFlags preferred, PowerRequestFlags minimum)
     {
+      if (string.IsNullOrWhiteSpace(reason))
+        reason = "Renouveau.Caffeine.PowerRequest";
       if ((minimum | preferred) != preferred)
         throw new ArgumentException("'" + nameof(minimum) + "' is not a subset of '" + nameof(preferred) + "'.");
 #if IS_Windows_only
-      return Win32.Create(preferred, minimum);
+      return Win32.Create(reason!, preferred, minimum);
 #else
-      return PlatformCreate(preferred, minimum);
+      return PlatformCreate(reason!, preferred, minimum);
 #endif
     }
 
     /// <summary>
-    /// Calls <c><see cref="Create(PowerRequestFlags, PowerRequestFlags)"/></c>
+    /// Calls <c><see cref="Create(string, PowerRequestFlags, PowerRequestFlags)"/></c>
     /// with <c>minimum</c> being <c><see cref="PowerRequestFlags.None"/></c>.
     /// </summary>
-    public static PowerRequest TryCreate(PowerRequestFlags preferred)
+    public static PowerRequest TryCreate(string reason, PowerRequestFlags preferred)
     {
-      return Create(preferred, PowerRequestFlags.None);
+      return Create(reason, preferred, PowerRequestFlags.None);
     }
 
     /// <summary>
-    /// Calls <c><see cref="Create(PowerRequestFlags, PowerRequestFlags)"/></c>
+    /// Calls <c><see cref="Create(string, PowerRequestFlags, PowerRequestFlags)"/></c>
     /// with both <c>preferred</c> and <c>minimum</c> being <c><paramref name="required"/></c>.
     /// </summary>
-    public static PowerRequest Create(PowerRequestFlags required)
+    public static PowerRequest Create(string reason, PowerRequestFlags required)
     {
-      return Create(required, required);
+      return Create(reason, required, required);
     }
 
 #if !IS_Windows_only
 
-    private static readonly Func<PowerRequestFlags, PowerRequestFlags, PowerRequest> PlatformCreate = CreatePlatformCreate();
+    private static readonly Func<string, PowerRequestFlags, PowerRequestFlags, PowerRequest> PlatformCreate = CreatePlatformCreate();
 
-    private static Func<PowerRequestFlags, PowerRequestFlags, PowerRequest> CreatePlatformCreate()
+    private static Func<string, PowerRequestFlags, PowerRequestFlags, PowerRequest> CreatePlatformCreate()
     {
       // Use delegate constructors to prevent C# compiler from
       // unnecessarily caching method-group-to-delegate conversion results.
       if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        return new Func<PowerRequestFlags, PowerRequestFlags, PowerRequest>(Win32.Create);
-      return new Func<PowerRequestFlags, PowerRequestFlags, PowerRequest>(NoOp.Create);
+        return new Func<string, PowerRequestFlags, PowerRequestFlags, PowerRequest>(Win32.Create);
+      return new Func<string, PowerRequestFlags, PowerRequestFlags, PowerRequest>(NoOp.Create);
     }
 
 #endif
