@@ -108,7 +108,7 @@ namespace Renouveau.Caffeine
     /// <c><paramref name="minimum"/></c> is not a subset of <c><paramref name="minimum"/></c>.
     /// </exception>
     /// <exception cref="PlatformNotSupportedException">
-    /// If the current platform does not support at least one flag in <c><paramref name="preferred"/></c>,
+    /// If the current platform does not support at least one flag in <c><paramref name="minimum"/></c>,
     /// including when the client is compiled using a higher version of Caffeine library,
     /// loads a lower version at run-time,
     /// and uses a flag the loaded version does not understand.

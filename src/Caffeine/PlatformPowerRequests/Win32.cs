@@ -30,7 +30,7 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
       const PowerRequestFlags Supported = (PowerRequestFlags.NoIdleSleep | PowerRequestFlags.NoIdleDisplay | PowerRequestFlags.NoSleep);
       minimum &= ~Supported;
       if (minimum != PowerRequestFlags.None)
-        throw new PowerRequestException("The following power request(s) included in '" + nameof(minimum) + "' is/are not supported on Windows: " + minimum.ToString());
+        throw new PlatformNotSupportedException("The following power request(s) included in '" + nameof(minimum) + "' is/are not supported on Windows: " + minimum.ToString());
       // Always use `Win32` on Windows (instead of `NoOp` sometimes)
       // to be friendly with devirtualization.
       return new Win32(reason, preferred & Supported);
