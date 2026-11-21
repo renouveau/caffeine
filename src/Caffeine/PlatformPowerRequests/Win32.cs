@@ -8,7 +8,10 @@
 
 using System;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 using System.Threading;
+
+#pragma warning disable SYSLIB0004 // We need CER in .NET Framework to guard against thread aborts.
 
 namespace Renouveau.Caffeine.PlatformPowerRequests
 {
@@ -44,6 +47,57 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
 
     private sealed class PowerRequestHandle : CriticalFinalizerObject, IDisposable
     {
+      // Member order is from Windows SDK 10.0.26100.0.
+      internal enum PowerRequestType
+      {
+        DisplayRequired,
+        SystemRequired,
+        AwayModeRequired,
+        ExecutionRequired,
+      }
+
+      [StructLayout(LayoutKind.Sequential)]
+      internal readonly unsafe struct SimpleReasonContext
+      {
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+        internal SimpleReasonContext(char* reason)
+        {
+          // POWER_REQUEST_CONTEXT_VERSION from Windows SDK 10.0.26100.0.
+          Version = 0;
+          // POWER_REQUEST_CONTEXT_SIMPLE_STRING
+          Flags = 1;
+          SimpleReasonString = reason;
+          Padding1 = default;
+          Padding2 = default;
+          Padding3 = default;
+        }
+        private readonly uint Version;
+        private readonly uint Flags;
+        private readonly char* SimpleReasonString;
+        private readonly uint Padding1;
+        private readonly uint Padding2;
+        private readonly IntPtr Padding3;
+      }
+
+#pragma warning disable SYSLIB1054 // No marshaling is needed.
+
+      [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+      [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+      [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+      internal static extern unsafe IntPtr PowerCreateRequest(SimpleReasonContext* context);
+
+      [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+      [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+      [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+      internal static extern int PowerSetRequest(IntPtr handle, PowerRequestType pqt);
+
+      [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+      [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+      [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+      private static extern int CloseHandle(IntPtr handle);
+
+#pragma warning restore SYSLIB1054
+
       internal IntPtr Handle;
 
       internal PowerRequestHandle() { Interlocked.Exchange(ref Handle, default); }
@@ -58,3 +112,5 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
     }
   }
 }
+
+#pragma warning restore SYSLIB0004
