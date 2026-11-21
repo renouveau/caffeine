@@ -103,7 +103,18 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
 
       internal IntPtr Handle;
 
-      internal PowerRequestHandle() { Interlocked.Exchange(ref Handle, default); }
+      [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+      internal PowerRequestHandle()
+      {
+        RuntimeHelpers.PrepareConstrainedRegions();
+        try
+        {
+        }
+        finally
+        {
+          Interlocked.Exchange(ref Handle, default);
+        }
+      }
 
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
       public void Dispose()
@@ -124,7 +135,18 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
         }
       }
 
-      ~PowerRequestHandle() { Dispose(); }
+      [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+      ~PowerRequestHandle()
+      {
+        RuntimeHelpers.PrepareConstrainedRegions();
+        try
+        {
+        }
+        finally
+        {
+          Dispose();
+        }
+      }
     }
   }
 }
