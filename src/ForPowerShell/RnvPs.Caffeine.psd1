@@ -1,7 +1,7 @@
 @{
 
 RootModule = 'RnvPs.Caffeine.psm1'
-ModuleVersion = '0.2.0'
+ModuleVersion = '0.3.0'
 # CompatiblePSEditions = @()
 GUID = '22b8071a-405b-41e3-961f-be03c1ce8a26'
 
@@ -39,7 +39,7 @@ PrivateData = @{
     LicenseUri = 'https://github.com/renouveau/caffeine/blob/main/LICENSE'
     ProjectUri = 'https://github.com/renouveau/caffeine'
     IconUri = 'https://raw.githubusercontent.com/renouveau/caffeine/refs/heads/main/src/ForPowerShell/icon.png'
-    ReleaseNotes = 'Dropped support for PowerShell [6.0, 7.3); improved safety against thread interruptions. Currently non-no-op requests can only be made on Windows.'
+    ReleaseNotes = 'Rewrote to use `PowerCreateRequest` series of API on Windows (removing requirement of managed-native thread correspondence and making the type highly scalable); added and required reason string in .NET methods; added optional reason string for `Invoke-CommandAwake` in PowerShell; renamed the members of `PowerRequestFlags` enumeration; fixed type of exceptions thrown from `(Try)Create`. Currently non-no-op requests can only be made on Windows.'
     # Prerelease = ''
     RequireLicenseAcceptance = $true
     # ExternalModuleDependencies = @()
