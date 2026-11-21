@@ -119,31 +119,31 @@ namespace Renouveau.Caffeine
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static PowerRequest Create(string? reason, PowerRequestFlags preferred, PowerRequestFlags minimum)
     {
-      if (string.IsNullOrWhiteSpace(reason))
-        reason = "Renouveau.Caffeine.PowerRequest";
       if ((minimum | preferred) != preferred)
         throw new ArgumentException("'" + nameof(minimum) + "' is not a subset of '" + nameof(preferred) + "'.");
+      if (string.IsNullOrWhiteSpace(reason))
+        reason = "Renouveau.Caffeine.PowerRequest";
 #if IS_Windows_only
       return Win32.Create(reason!, preferred, minimum);
 #else
-      return PlatformCreate(reason!, preferred, minimum);
+      return PlatformCreate(reason, preferred, minimum);
 #endif
     }
 
     /// <summary>
-    /// Calls <c><see cref="Create(string, PowerRequestFlags, PowerRequestFlags)"/></c>
+    /// Calls <c><see cref="Create(string?, PowerRequestFlags, PowerRequestFlags)"/></c>
     /// with <c>minimum</c> being <c><see cref="PowerRequestFlags.None"/></c>.
     /// </summary>
-    public static PowerRequest TryCreate(string reason, PowerRequestFlags preferred)
+    public static PowerRequest TryCreate(string? reason, PowerRequestFlags preferred)
     {
       return Create(reason, preferred, PowerRequestFlags.None);
     }
 
     /// <summary>
-    /// Calls <c><see cref="Create(string, PowerRequestFlags, PowerRequestFlags)"/></c>
+    /// Calls <c><see cref="Create(string?, PowerRequestFlags, PowerRequestFlags)"/></c>
     /// with both <c>preferred</c> and <c>minimum</c> being <c><paramref name="required"/></c>.
     /// </summary>
-    public static PowerRequest Create(string reason, PowerRequestFlags required)
+    public static PowerRequest Create(string? reason, PowerRequestFlags required)
     {
       return Create(reason, required, required);
     }
