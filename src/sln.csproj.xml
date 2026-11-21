@@ -84,6 +84,7 @@
   <PropertyGroup Condition="$(IsPackable)">
     <PackRelease>true</PackRelease>
     <Title>$(PackageId)</Title>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -97,6 +98,7 @@
   </PropertyGroup>
   <ItemGroup Condition="$(IsPackable)">
     <None Include="./../../LICENSE" Pack="true" Visible="false" PackagePath="" />
+    <None Include="./README.md" Pack="true" Visible="false" PackagePath="" />
     <None Include="./NOTICE" Pack="true" Visible="false" PackagePath="" />
     <None Include="./icon.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
