@@ -1,5 +1,21 @@
 # API usage in `PlatformPowerRequests.Win32`
 
+Win32 implementation of `PowerRequest` uses [`PowerCreateRequest` API series](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-powercreaterequest).
+
+Testing shows that the documentation of [`PowerSetRequest`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-powersetrequest#parameters) is inaccurate, at least for Windows 11.  It says
+
+> A `PowerRequestSystemRequired` must be taken in addition to a `PowerRequestDisplayRequired` to ensure the display stays on and the system does not enter sleep for the duration of the request.
+
+I did the following test.
+
+- Device with Connected Standby enabled, on battery.
+- Display/sleep time-outs are 3 minutes.
+- Run PowerShell code `$obj = [Renouveau.Caffeine.PowerRequest]::Create('test', 'DoNotIdleDisplay'); Start-Sleep (10*60+1); Write-Host 1; $obj.Dispose(); Write-Host 2;` and leave the computer still.
+
+The result is that the computer does not dim before outputting `1`.  After outputting `2`, it dims the display after 2 minutes 45 seconds, and the display is turned off after another 15 seconds.  This shows `PowerRequestDisplayRequired` alone is sufficient to keep the display on and the computer not enter sleep.
+
+## old text
+
 Currently, Win32 implementation of `PowerRequest` uses [`SetThreadExecutionState`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadexecutionstate) instead of the newer [`PowerCreateRequest` series](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-powercreaterequest).  The reason is *not* that `SetThreadExecutionState` is supported on earlier systems than `PowerCreateRequest`.
 
 Per the documentation of [`PowerSetRequest`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-powersetrequest#remarks), using it to request system (do not idle to sleep) or execution (only applicable to suspension of Windows Store apps) will become ineffective 5 minutes after system sleep timer expires on Connected Standby on battery.  It also mentions that away-mode requests are terminated once the user initiates a sleep on non-S3 machines.  In contrast, the documentation of [`SetThreadExecutionState`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadexecutionstate) doesn’t mention such restrictions.  This is the reason that moved the needle, despite `PowerCreateRequest` is more user-friendly as it allows us to set a description.
