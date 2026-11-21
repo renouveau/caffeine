@@ -7,6 +7,8 @@
 #nullable enable
 
 using System;
+using System.Runtime.ConstrainedExecution;
+using System.Threading;
 
 namespace Renouveau.Caffeine.PlatformPowerRequests
 {
@@ -28,6 +30,8 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
       return new Win32(preferred & Supported);
     }
 
+    private PowerRequestHandle? handle_;
+
     private Win32(PowerRequestFlags flags)
     {
       throw new NotImplementedException();
@@ -36,6 +40,21 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
     public sealed override void Dispose()
     {
       throw new NotImplementedException();
+    }
+
+    private sealed class PowerRequestHandle : CriticalFinalizerObject, IDisposable
+    {
+      internal IntPtr Handle;
+
+      internal PowerRequestHandle() { Interlocked.Exchange(ref Handle, default); }
+
+      public void Dispose()
+      {
+        GC.SuppressFinalize(this);
+        throw new NotImplementedException();
+      }
+
+      ~PowerRequestHandle() { Dispose(); }
     }
   }
 }
