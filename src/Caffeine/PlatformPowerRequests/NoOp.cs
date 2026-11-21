@@ -19,11 +19,12 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
     /// <summary>
     /// Creates a power request for an unsupported platform.
     /// </summary>
-    internal new static NoOp Create(string reason, PowerRequestFlags preferred, PowerRequestFlags minimum)
+    internal new static NoOp Create(string? reason, PowerRequestFlags preferred, PowerRequestFlags minimum)
     {
       _ = preferred; // Suppress "unused parameter".
       if (minimum == PowerRequestFlags.None)
-        return new NoOp(reason);
+        return new NoOp(Win32.SanitizeReason(reason));
+      // Use the least strict sanitization policy. ^^^
       throw new PlatformNotSupportedException("No power request is currently supported on the current platform, but '"
         + nameof(minimum) + "' is not '" + nameof(PowerRequestFlags.None) + "': " + minimum.ToString());
     }

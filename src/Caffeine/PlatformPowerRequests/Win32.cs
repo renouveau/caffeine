@@ -25,7 +25,7 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
     /// <summary>
     /// Creates a power request for Windows 7 or later.
     /// </summary>
-    internal new static Win32 Create(string reason, PowerRequestFlags preferred, PowerRequestFlags minimum)
+    internal new static Win32 Create(string? reason, PowerRequestFlags preferred, PowerRequestFlags minimum)
     {
       const PowerRequestFlags Supported = (PowerRequestFlags.NoIdleSleep | PowerRequestFlags.NoIdleDisplay | PowerRequestFlags.NoSleep);
       minimum &= ~Supported;
@@ -33,7 +33,20 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
         throw new PlatformNotSupportedException("The following power request(s) included in '" + nameof(minimum) + "' is/are not supported on Windows: " + minimum.ToString());
       // Always use `Win32` on Windows (instead of `NoOp` sometimes)
       // to be friendly with devirtualization.
-      return new Win32(reason, preferred & Supported);
+      return new Win32(SanitizeReason(reason), preferred & Supported);
+    }
+
+    internal static string SanitizeReason(string? reason)
+    {
+      // `PowerCreateRequest` accepts null-terminated strings.
+      // We replace embedded '\0' by space to reveal the actual text.
+      if (reason is null || (reason = reason.Replace('\0', ' ').Trim()).Length == 0)
+        return "Renouveau.Caffeine.PowerRequest";
+      // The longest string accepted by `PowerCreateRequest` is 32767 (counting the null terminator)
+      // by testing on Windows 8 RTM and Windows 11 version 26H2.
+      if (reason.Length > 32766)
+        reason = string.Concat(reason.Substring(0, 32766 - 4), " ...");
+      return reason;
     }
 
     private PowerRequestHandle? handle_;

@@ -70,7 +70,7 @@ namespace Renouveau.Caffeine
 
     /// <summary>
     /// Gets the reason for this request.
-    /// This property is never <c><see langword="null"/></c>.
+    /// This property is never <c><see langword="null"/></c> and has been processed to fit the platform API.
     /// </summary>
     public string Reason { get; }
 
@@ -98,9 +98,7 @@ namespace Renouveau.Caffeine
     /// <c><paramref name="minimum"/></c> and <c><paramref name="preferred"/></c>.
     /// </item>
     /// <item>
-    /// The string <c><paramref name="reason"/></c> is trimmed if not <c><see langword="null"/></c>.
-    /// If it is <c><see langword="null"/></c> or whitespace,
-    /// a default reason string will be used.
+    /// The string <c><paramref name="reason"/></c> is processed to fit the platform API.
     /// </item>
     /// </list>
     /// </summary>
@@ -122,8 +120,6 @@ namespace Renouveau.Caffeine
     {
       if ((minimum | preferred) != preferred)
         throw new ArgumentException("'" + nameof(minimum) + "' is not a subset of '" + nameof(preferred) + "'.");
-      if ((reason is null) || (reason = reason.Trim()).Length == 0)
-        reason = "Renouveau.Caffeine.PowerRequest";
 #if IS_Windows_only
       return Win32.Create(reason, preferred, minimum);
 #else
@@ -151,15 +147,15 @@ namespace Renouveau.Caffeine
 
 #if !IS_Windows_only
 
-    private static readonly Func<string, PowerRequestFlags, PowerRequestFlags, PowerRequest> PlatformCreate = CreatePlatformCreate();
+    private static readonly Func<string?, PowerRequestFlags, PowerRequestFlags, PowerRequest> PlatformCreate = CreatePlatformCreate();
 
-    private static Func<string, PowerRequestFlags, PowerRequestFlags, PowerRequest> CreatePlatformCreate()
+    private static Func<string?, PowerRequestFlags, PowerRequestFlags, PowerRequest> CreatePlatformCreate()
     {
       // Use delegate constructors to prevent C# compiler from
       // unnecessarily caching method-group-to-delegate conversion results.
       if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        return new Func<string, PowerRequestFlags, PowerRequestFlags, PowerRequest>(Win32.Create);
-      return new Func<string, PowerRequestFlags, PowerRequestFlags, PowerRequest>(NoOp.Create);
+        return new Func<string?, PowerRequestFlags, PowerRequestFlags, PowerRequest>(Win32.Create);
+      return new Func<string?, PowerRequestFlags, PowerRequestFlags, PowerRequest>(NoOp.Create);
     }
 
 #endif
