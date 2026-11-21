@@ -23,16 +23,23 @@ namespace Renouveau.Caffeine
   /// Represents a potentially active power request.
   /// <list type="bullet">
   /// <item>
-  /// All public members, as well as the finalizer, of this class are
-  /// thread-safe and safe before/during/after disposal/finalization.
+  /// All public members of this class are
+  /// thread-safe and safe before/during/after disposal.
   /// </item>
   /// <item>
-  /// It is <strong>not</strong> suitable for use in SQL Server
-  /// or any hosted environment which does not map managed threads one-to-one with unmanaged threads.
+  /// This class is not finalizable but often own finalizable resources.
+  /// All public members
+  /// (including <c><see cref="IDisposable.Dispose()"/></c> — concurrent disposal and finalization is handled properly)
+  /// of this class are safe to access during/after resurrection,
+  /// but doing so is meaningless because
+  /// <list type="bullet">
+  /// <item><c><see cref="ActiveRequests"/></c> might produce inaccurate results</item>
+  /// <item>and the owned resources can be finalized before/after resurrection.</item>
+  /// </list>
   /// </item>
   /// <item>
-  /// It is also <strong>not</strong> suitable when the thread calling creation methods might be aborted.
-  /// (Using it in unloadable application domains, if the thread is never aborted inside creation methods, is fine.)
+  /// This class intends to be safe against thread aborts and
+  /// can be used in environments demanding high reliability.
   /// </item>
   /// </list>
   /// A client application cannot meaningfully derive from this class.
@@ -84,14 +91,8 @@ namespace Renouveau.Caffeine
     /// <item>
     /// <c><paramref name="minimum"/></c> must be a subset of <c><paramref name="preferred"/></c>.
     /// </item>
-    /// <item>
-    /// If all requests in <c><paramref name="minimum"/></c> can be satisfied,
-    /// an object is returned, which should be disposed.
-    /// </item>
-    /// <item>
-    /// If some request in <c><paramref name="minimum"/></c> cannot be satisfied,
-    /// an exception is thrown and no request is made.
-    /// </item>
+    /// <item>If an exception is thrown, no request is made.</item>
+    /// <item>If an object is returned, it should be disposed later.</item>
     /// <item>
     /// If an object is returned, its set of active requests is always between
     /// <c><paramref name="minimum"/></c> and <c><paramref name="preferred"/></c>.
@@ -110,9 +111,6 @@ namespace Renouveau.Caffeine
     /// including when the client is compiled using a higher version of Caffeine library,
     /// loads a lower version at run-time,
     /// and uses a flag the loaded version does not understand.
-    /// </exception>
-    /// <exception cref="ThreadInterruptedException">
-    /// The request is guaranteed to be cancelled if the thread is interrupted during this call.
     /// </exception>
     /// <exception cref="PowerRequestException">
     /// For any other exceptional condition in making the request.
