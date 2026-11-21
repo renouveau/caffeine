@@ -7,11 +7,14 @@
 #nullable enable
 
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Threading;
 
 #pragma warning disable SYSLIB0004 // We need CER in .NET Framework to guard against thread aborts.
+#pragma warning disable CA2219 // We need to `throw` from a reliable `finally`.
 
 namespace Renouveau.Caffeine.PlatformPowerRequests
 {
@@ -102,10 +105,23 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
 
       internal PowerRequestHandle() { Interlocked.Exchange(ref Handle, default); }
 
+      [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
       public void Dispose()
       {
-        GC.SuppressFinalize(this);
-        throw new NotImplementedException();
+        RuntimeHelpers.PrepareConstrainedRegions();
+        try
+        {
+        }
+        finally
+        {
+          GC.SuppressFinalize(this);
+          IntPtr h = Interlocked.Exchange(ref Handle, default);
+          if (h != default && h != (IntPtr)(-1) && CloseHandle(h) == 0)
+          {
+            int win32error = Marshal.GetLastWin32Error();
+            throw new Win32Exception(win32error);
+          }
+        }
       }
 
       ~PowerRequestHandle() { Dispose(); }
@@ -113,4 +129,5 @@ namespace Renouveau.Caffeine.PlatformPowerRequests
   }
 }
 
+#pragma warning restore CA2219
 #pragma warning restore SYSLIB0004
