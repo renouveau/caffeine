@@ -68,6 +68,9 @@ Prevents the system from entering sleep even if the user initiates it.
 .PARAMETER Permissive
 Runs the command even if one or more requests are not supported.  By default, the execution fails immediately if one or more requests are not supported.  Specifying this switch does not allow the command to run when the request(s) fail(s) for other reasons (such as a failure of native API call).
 
+.PARAMETER Reason
+An optional reason string for the power request.  If too long, it might be truncated.
+
 .PARAMETER NoUsage
 Do not output usage hints to the warning stream when an unusual usage is detected.
 
@@ -115,6 +118,7 @@ Param
   [switch]$NoIdleDisplay,
   [switch]$NoSleep,
   [switch]$Permissive,
+  [string]$Reason = ' ',
   [switch]$NoUsage
 )
 
@@ -136,11 +140,29 @@ If ($preferred -eq [Renouveau.Caffeine.PowerRequestFlags]::None -and -not $NoUsa
   }
 }
 
+If ($null -ne $Reason)
+{
+  $Reason = $Reason.Trim();
+}
+If ([string]::IsNullOrEmpty($Reason))
+{
+  $Reason = ('' + $ScriptBlock).Trim();
+  If ($Reason.Length -gt 49)
+  {
+    $Reason = $Reason.Substring(0, 45) + ' ...';
+  }
+  $Reason = 'Invoke-CommandAwake: ' + $Reason;
+}
+ElseIf ($Reason.Length -gt 70)
+{
+  $Reason = $Reason.Substring(0, 66) + ' ...';
+}
+
 $private:CurrErrActionPref = $ErrorActionPreference;
 $local:ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop;
 Try
 {
-  $private:request = [Renouveau.Caffeine.PowerRequest]::Create($preferred, $minimum);
+  $private:request = [Renouveau.Caffeine.PowerRequest]::Create($Reason, $preferred, $minimum);
   If ($request.ActiveRequests -ne $preferred)
   {
     Write-Warning "Invoke-CommandAwake: FEWER active requests: $($request.ActiveRequests)";
