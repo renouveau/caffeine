@@ -4,6 +4,8 @@
 // This file is part of Renouveau Caffeine, available under the MIT license.
 // https://github.com/renouveau/caffeine
 
+#nullable enable
+
 using System;
 
 namespace Renouveau.Caffeine
@@ -13,18 +15,20 @@ namespace Renouveau.Caffeine
   /// </summary>
   public sealed class PowerRequestException : Exception
   {
+    private const string DefaultMessage = "An exception occurred when making a power request to the operating system.";
+
     /// <inheritdoc cref="Exception()"/>
-    public PowerRequestException() : this("An exception occurred when making a power request to the operating system.")
+    public PowerRequestException() : this(DefaultMessage)
     {
     }
 
     /// <inheritdoc cref="Exception(string)"/>
-    public PowerRequestException(string message) : base(message)
+    public PowerRequestException(string? message) : base(message ?? DefaultMessage)
     {
     }
 
     /// <inheritdoc cref="Exception(string, Exception)"/>
-    public PowerRequestException(string message, Exception innerException) : base(message, innerException)
+    public PowerRequestException(string? message, Exception? innerException) : base(message ?? DefaultMessage, innerException)
     {
     }
   }
