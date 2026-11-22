@@ -10,7 +10,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <!-- solution-level metadata -->
     <Company>Renouveau</Company>
     <Product>Renouveau Caffeine Module</Product>

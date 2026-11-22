@@ -4,8 +4,6 @@
 // This file is part of Renouveau Caffeine, available under the MIT license.
 // https://github.com/renouveau/caffeine
 
-#nullable enable
-
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;

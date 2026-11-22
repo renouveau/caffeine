@@ -4,8 +4,6 @@
 // This file is part of Renouveau Caffeine, available under the MIT license.
 // https://github.com/renouveau/caffeine
 
-#nullable enable
-
 #if !IS_Windows_only
 
 using System;
