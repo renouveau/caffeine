@@ -4,6 +4,8 @@
 // This file is part of Renouveau Caffeine, available under the MIT license.
 // https://github.com/renouveau/caffeine
 
+#nullable enable
+
 namespace Renouveau.Caffeine.Internals
 {
   /// <summary>
@@ -27,23 +29,23 @@ namespace Renouveau.Caffeine.Internals
     public static partial bool IsStable { get; }
     public static partial string DeveloperDateTime { get; }
     public static partial bool WorkingTreeIsClean { get; }
-    public static partial string GitCommitHash { get; }
+    public static partial string? GitCommitHash { get; }
 #elif DURING_IntelliSense
 #pragma warning disable CS1591 // The following code is excluded from MSBuild (no need to document).
-    public static string License { get { throw null; } }
-    public static string Notice { get { throw null; } }
-    public static string TargetFramework { get { throw null; } }
-    public static string Platform { get { throw null; } }
-    public static string Configuration { get { throw null; } }
-    public static string BuildToolset { get { throw null; } }
-    public static string SemanticVersionString { get { throw null; } }
-    public static uint MajorVersion { get { throw null; } }
-    public static uint MinorVersion { get { throw null; } }
-    public static uint PatchVersion { get { throw null; } }
-    public static bool IsStable { get { throw null; } }
-    public static string DeveloperDateTime { get { throw null; } }
-    public static bool WorkingTreeIsClean { get { throw null; } }
-    public static string GitCommitHash { get { throw null; } }
+    public static string License { get { throw null!; } }
+    public static string Notice { get { throw null!; } }
+    public static string TargetFramework { get { throw null!; } }
+    public static string Platform { get { throw null!; } }
+    public static string Configuration { get { throw null!; } }
+    public static string BuildToolset { get { throw null!; } }
+    public static string SemanticVersionString { get { throw null!; } }
+    public static uint MajorVersion { get { throw null!; } }
+    public static uint MinorVersion { get { throw null!; } }
+    public static uint PatchVersion { get { throw null!; } }
+    public static bool IsStable { get { throw null!; } }
+    public static string DeveloperDateTime { get { throw null!; } }
+    public static bool WorkingTreeIsClean { get { throw null!; } }
+    public static string? GitCommitHash { get { throw null!; } }
 #pragma warning restore CS1591
 #endif
   }

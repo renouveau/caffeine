@@ -58,7 +58,7 @@ The configuration (Debug/Release).  Only ASCII letters, numbers, underscore, ful
 The build toolset (e.g., MSBuild 18, .NET SDK 10).  Only ASCII letters, numbers, full stop, comma, hyphen-minus, and space are allowed.
 
 .PARAMETER UseNeatSemVer200
-Whether the field `SemanticVersion` of type `Renouveau.Neat.SemVer200` should be generated.
+Whether the property `SemanticVersion` of type `Renouveau.Neat.SemVer200` should be generated.
 
 .EXAMPLE
 
@@ -320,6 +320,8 @@ If ($UseNeatSemVer200)
 '[assembly: AssemblyInformationalVersion("' + $SemVerNumbers + $SemVerExtras + '")]'
 '[assembly: AssemblyVersion("' + $SemVerNumbers + '")]'
 ''
+'#nullable enable'
+''
 'namespace ' + $Namespace
 '{'
 '  public static partial class ' + $ClassName
@@ -395,26 +397,28 @@ If ($UseNeatSemVer200)
 ''
 '    /// <summary>'
 '    /// If the assembly was built in a clean working tree in a Git repository,'
-'    /// this field is the UTC date and time of the later of author/committer dates,'
+'    /// this property is the UTC date and time of the later of author/committer dates,'
 "    /// formatted as <c>yyyyMMdd'T'HHmmss'Z'</c>."
-'    /// Otherwise, this field is the UTC date and time when the assembly was built.'
+'    /// Otherwise, this property is the UTC date and time when the assembly was built.'
 '    /// </summary>'
 '    public static partial string DeveloperDateTime { get { return ' + $DevDateTime_CSharp + '; } }'
 ''
 '    /// <summary>'
 '    /// Indicates whether the working tree was clean.'
-'    /// If the assembly was built outside a Git repository, this field is <c><see langword="false"/></c>.'
-'    /// For a stable version, this field is always <c><see langword="true"/></c>.'
+'    /// If the assembly was built outside a Git repository, this property is <c><see langword="false"/></c>.'
+'    /// For a stable version, this property is always <c><see langword="true"/></c>.'
 '    /// </summary>'
 '    public static partial bool WorkingTreeIsClean { get { return ' + $TreeIsClean_CSharp + '; } }'
 ''
 '    /// <summary>'
-'    /// If the assembly was built outside a Git repository, this field is <c><see langword="null"/></c>.'
-'    /// Otherwise, this field is the 40-character Git commit hash in lower case.'
+'    /// If the assembly was built outside a Git repository, this property is <c><see langword="null"/></c>.'
+'    /// Otherwise, this property is the 40-character Git commit hash in lower case.'
 '    /// </summary>'
-'    public static partial string GitCommitHash { get { return ' + $CommitHash_CSharp + '; } }'
+'    public static partial string? GitCommitHash { get { return ' + $CommitHash_CSharp + '; } }'
 '  }'
 '}'
+''
+'#nullable restore'
 ''
 }) -join "`n";
 
