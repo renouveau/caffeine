@@ -4,6 +4,8 @@
 // This file is part of Renouveau Caffeine, available under the MIT license.
 // https://github.com/renouveau/caffeine
 
+#nullable enable
+
 using System;
 
 #pragma warning disable CA1028 // Allow uint-based enum.
